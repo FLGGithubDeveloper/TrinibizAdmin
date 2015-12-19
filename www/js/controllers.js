@@ -203,14 +203,23 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 })
 
-.controller('RegistrationCtrl', function($scope, $state, $cordovaOauth, $ionicPlatform, UserService) {
-
-  $scope.signupEmail = function() {
-    //Create a new user on Parse
-    UserService.register($scope.data.email, $scope.data.password, $scope.data.email);
-  };
-
-})
+.controller('RegistrationCtrl', function($scope, $state, $cordovaOauth, $ionicPlatform,$ionicHistory, UserService, ToastService) {
+    $scope.data = {};
+    $scope.signupEmail = function() {
+      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username)
+        .then(function(user) {
+          ToastService.showToast('Please check your email to verify your account');
+          $state.go('app.login');
+          $ionicHistory.nextViewOptions({
+         disableBack: true
+       });
+        }, function(error) {
+          $scope.$apply(function(){
+            ToastService.showToast(error.message);
+          });
+        });
+    }
+  })
 
 .controller('LoginCtrl', function($scope, $state, $cordovaOauth, $ionicPlatform, USER_ROLES, GUEST_USER, $ionicHistory, UserService,ToastService) {
 

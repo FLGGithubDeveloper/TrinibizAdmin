@@ -189,22 +189,18 @@ angular.module('trinibiz.services', [])
       return AclService.hasRole(USER_ROLES.owner);
 
     }
-    var register = function(username, password, email) {
+    
+    var register = function(firstname, lastname,username, password, email) {
       var user = new ParseFactory.User();
+      user.set("firstName", firstname);
+      user.set("lastName", lastname);
       user.set("username", username);
       user.set("password", password);
       user.set("email", email);
-      user.signUp(null, {
-        success: function(user) {
-          //
-          alert("success!");
-        },
-        error: function(user, error) {
-          // Show the error message somewhere and let the user try again.
-          alert("Error: " + error.code + " " + error.message);
-        }
-      });
+      user.set("type", 'non-owner');
+      return user.signUp(null);
     }
+
     var resetPassword = function(email) {
       ParseFactory.User.requestPasswordReset(email, {
         success: function() {
