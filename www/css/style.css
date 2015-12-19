@@ -1,0 +1,126 @@
+/* Empty. Add your own CSS if you like */
+
+/*@import "compass/css3";*/
+
+@import url(http://fonts.googleapis.com/css?family=Merriweather+Sans);
+ div.social-wrap button {
+    padding-right: 45px;
+    height: 35px;
+    background: none;
+    border: none;
+    display: block;
+    background-size: 35px 35px;
+    background-position: right center;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+    color: white;
+    font-family:"Merriweather Sans", sans-serif;
+    font-size: 14px;
+    margin: 0 auto;
+    width: 205px;
+    border-bottom: 2px solid transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    box-shadow: 0 4px 2px -2px gray;
+    text-shadow: rgba(0, 0, 0, .5) -1px -1px 0;
+}
+button#facebook {
+    border-color: #2d5073;
+    background-color: #3b5998;
+    background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png);
+}
+
+.home-container {
+  display: -webkit-flex;
+  -webkit-flex-direction: column;
+}
+
+.spacer {
+    margin-top: 100px;
+    margin-bottom: 150px;
+}
+
+.list-group-item {
+    text-align: center;
+}
+
+.list-group h3 {
+    font-size: 35px;
+    background-color: #f83764;
+    width: 100%;
+    color: #ffffff;
+    padding: 10px;
+}
+
+.list-group h5 {
+    color: #1c70f8;
+    font-style: italic;
+    font-size: 30px;
+}
+
+blockquote {
+    border: none;
+}
+
+blockquote p, cite {
+    font-size: 14px;
+}
+
+.nav {
+    margin: 10px 0 20px 0;
+}
+
+.well h4 {
+    background-color: #ffffff;
+    padding: 10px;
+    border: 1px solid #f83764;
+}
+
+select {
+    background-color: #44f8bd;
+    border: none;
+    padding: 10px;
+    color: #ffffff;
+}
+
+.messages {
+  font-size: smaller;
+  /*padding-top: 5px;*/
+  padding: 10px;
+  color: red;
+}
+/*
+input.ng-invalid {
+    border: 1px red solid !important;
+    outline-color: red;
+}
+
+input.ng-valid {
+    border: 1px green solid !important;
+    outline-color: green;
+}*/
+
+.profile-pic {
+    width : 30px;
+    height : 30px;
+    border-radius: 50% 50%;
+}
+
+.review-profile-pic {
+    width : 40px;
+    height : 40px;
+}
+
+.item-icon-left ion-spinner {
+  float: left;
+  margin-left: -3.2em;
+  margin-right: 1em;
+  margin-top: -0.2em;
+ }
+
+.spinner svg {
+  width: 28px;
+  height: 28px;
+  stroke: #999;
+  fill: #999;
+}

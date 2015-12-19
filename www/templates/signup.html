@@ -1,0 +1,31 @@
+<ion-view title="Signup" name="signup-view">
+    <ion-content padding="true" scroll="false" class="has-header">
+    <label>
+        <span>Sign Up to review businesses</span>
+    </label>
+        <form class="list" name="signUpForm" novalidate ng-submit="signupEmail()" >
+            <!--ion-list-->
+                <div class="list">
+                 <label span class="item item-input">
+                    <input type="email" name="username" placeholder="Enter Email as Username" ng-model="data.username" required />
+                    <span ng-messages="signUpForm.username.$error" ng-messages-include="templates/app_messages.html"></span>
+                  </label>
+
+                <label span class="item item-input">
+                    <input type="password" name="password" placeholder="At least 6 characters" ng-model="data.password" ng-minlength="6" required>
+                    <span ng-messages="signUpForm.password.$error" ng-messages-include="templates/app_messages.html"></span>
+                </label>
+
+                <label span class="item item-input">
+                    <input type="password" name="confirmPassword" placeholder="Must match with password" ng-model="data.confirmPassword" ng-minlength="6" required compare-to="data.password" />
+                    <span ng-messages="signUpForm.confirmPassword.$error" ng-messages-include="templates/app_messages.html"></span>
+                </label>
+
+                <!--/ion-list-->
+                <button ng-disabled="signUpForm.$invalid" class="button button-stable button-block">
+                    Sign up
+                </button>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

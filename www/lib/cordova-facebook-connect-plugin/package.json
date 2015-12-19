@@ -1,0 +1,20 @@
+{
+  "name": "cordova-facebook-connect-plugin",
+  "version": "0.0.0",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-jshint": "~0.7.2",
+    "karma": "~0.12.31",
+    "grunt-karma": "~0.10.1",
+    "mocha": "~2.2.1",
+    "karma-mocha": "~0.1.10",
+    "chai": "~2.1.2",
+    "karma-chai": "~0.1.0",
+    "grunt-contrib-connect": "~0.9.0",
+    "load-grunt-tasks": "~3.1.0",
+    "karma-coverage": "~0.2.7",
+    "karma-phantomjs-launcher": "~0.1.4"
+  }
+}

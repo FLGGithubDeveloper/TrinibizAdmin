@@ -1,0 +1,35 @@
+{
+  "name": "cordova-facebook-connect-plugin",
+  "authors": [
+    "Pat Nolan <patnolanireland@gmail.com>"
+  ],
+  "description": "This is a simple replacement for the phonegap-facebook-connect-plugin for Browser development.  It does not take effect unless in development as the real implementation is used",
+  "main": "lib/cordova-facebook-connect-plugin.js",
+  "keywords": [
+    "Cordova",
+    "phonegap-facebook-connect-plugin",
+    "FacebookSDK",
+    "Ionic Framework"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://github.com/patnolanireland/cordova-facebook-connect-plugin",
+  "_release": "a5f5ecb39e",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "a5f5ecb39e8e8a54cee9b86c637c883a3ffb2cb7"
+  },
+  "_source": "git://github.com/patnolanireland/cordova-facebook-connect-plugin.git",
+  "_target": "*",
+  "_originalSource": "cordova-facebook-connect-plugin",
+  "_direct": true
+}

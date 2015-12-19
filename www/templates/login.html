@@ -1,0 +1,39 @@
+<ion-view title="Login" name="login-view">
+    <ion-content padding="true" scroll="false" class="has-header">
+        <form class="list" name="loginForm" novalidate ng-submit="loginEmail()">
+                <div class="list">
+                    <label span class="item item-input">
+                        <input type="email" class= "auth-form" name="username" placeholder="Enter Email as Username" ng-model="data.username" required />
+                        <span ng-messages="loginForm.username.$error" ng-messages-include="templates/app_messages.html"></span>
+                    </label>
+
+                    <label span class="item item-input">
+                        <input type="password" class= "auth-form" name="password" placeholder="Enter Password" ng-model="data.password" ng-minlength="6" required />
+                        <span ng-messages="loginForm.password.$error" ng-messages-include="templates/app_messages.html"></span>
+                    </label>
+                </div>            
+            <button type="submit" ng-disabled="loginForm.$invalid" class="button button-stable button-block">
+                    Submit
+            </button>
+
+        </form>
+        <!--div class="social-wrap">
+            <button id = "facebook" ng-click="loginFacebook()">Login with Facebook</button>
+        </div-->
+        <ion-list>
+          <ion-item href="#/app/signup" class="button button-positive button-clear button-block" ng-click="closeLogin()">Create an account</ion-item>
+          <ion-item class="button button-positive button-clear button-block" ng-click="toggleFPassword()">Forgot your password?</ion-item>
+        </ion-list>
+        <div ng-show="fp_display">
+          <form class="list" name="resetForm" novalidate ng-submit="resetPassword(data.resetEmail)">
+            <div class="item item-input-inset">
+              <label class="item-input-wrapper">
+                <input type="email" name="reset_email" placeholder="Submit email" ng-model="data.resetEmail" required />
+                <!--span ng-messages="loginForm.reset_email.$error" ng-messages-include="templates/app_messages.html"></span-->
+              </label>
+              <button type = "submit" class="button button-small">Submit</button>
+            </div>
+          </form>
+        </div>
+    </ion-content>
+</ion-view>

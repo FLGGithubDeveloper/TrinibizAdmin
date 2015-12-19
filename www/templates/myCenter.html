@@ -1,0 +1,18 @@
+<ion-view view-title="Profile">
+    <ion-content padding="true" class="has-header">
+        <ion-list>
+            <!--ion-item class="item-thumbnail-left">
+                <img src="http://graph.facebook.com/{{user.id}}/picture?width=270&height=270"/-->
+              <div class="list card">
+              <div class="item item-thumbnail-left">
+                <img class="profile-pic" ng-src="{{sessionUser.user.profilePic.url()}}">
+                <h2>{{ sessionUser.user.firstName}} {{ sessionUser.user.lastName}}</h2>
+                <h2>{{ sessionUser.user.email}}</h2>
+              </div>
+            </div>
+            <!--div class="button-bar">
+              <a class="button button-small button-positive">Edit Profile</a>
+            </div-->
+        </ion-list>
+    </ion-content>
+</ion-view>
