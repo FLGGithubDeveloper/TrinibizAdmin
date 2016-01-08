@@ -22,7 +22,7 @@
     <ion-content>
       <ion-list>
           <ion-item class="item item-thumbnail-left" ng-show ="isAuthenticated()">
-              <img class="profile-pic" ng-src="{{user().profilePic.url()}}">
+              <img class="profile-pic" src="assets\img\categories\guestUser.jpg" ng-src="{{user().profilePic.url()}}" ng-clicked="showPicLoad()">
               <a menu-close ui-sref="app.profile" ng-show="can(appViews.profile)"><h2>{{user().firstName}}</h2>
               </a>
               <p>{{user().type}}</p>
@@ -46,13 +46,14 @@
           Businesses
         </ion-item>
           <ion-item menu-close ui-sref="app.login" ng-show="can(appViews.login)">
-              Login
+          <i class="icon ion-log-in"> Login</i>
           </ion-item>
           <ion-item menu-close ui-sref="app.signup" ng-show="can(appViews.signup)">
-              Sign Up
+          <i class="icon ion-ios-person"> Sign Up</i>
           </ion-item>
+          <ion-item menu-close ui-sref="app.settings" ng-show="can(appViews.settings)"><i class="icon ion-gear-a"> Settings</i></ion-item>
           <ion-item ng-show="can(appActions.logout)" menu-close ng-click="logOut()">
-              Logout
+          <i class="icon ion-log-out"> Logout</i>
           </ion-item>
       </ion-list>
     </ion-content>
