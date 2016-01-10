@@ -9,20 +9,27 @@
     on-refresh="refresh()">
   </ion-refresher>
     <ion-list class="list card">
-      <ion-item   class="item" ng-repeat="business in businesses | orderBy: 'name' ">
+      <ion-item class="item" ng-repeat="business in businesses | orderBy: 'name' ">
         <div class="item item-divider"><h3>{{business.name}}</h3></div>
-        <div class="item item-text-wrap"><p href="{{business.website}}">{{business.website}}</p>
-        <p>{{business.street}}, {{business.city}}</p></div>
-        <a class="item item-icon-right" ng-href="tel: {{business.phone}}">Call us at {{business.phone}}
-        <i class="icon ion-ios-telephone-outline"></i></a>
-
-
-        <div class="item item-body">
+        <p>
           <img class="full-image" ng-src="assets\img\categories\placeholder.jpg">
-          <p>Key Services: {{business.services}}</p>
+        </p>
+        <ion-item class="card item-text-wrap">
+          <div class="item item-icon-left"><i class="icon ion-bowtie dark"></i> {{business.services}}</div>
+          <div class="item item-icon-left"><a href="{{business.website}}"><i class="icon ion-earth balanced"></i>{{business.website}}</a></div>
+          <div class="item item-icon-left"><i class="icon ion-location assertive"></i> {{business.street}}, {{business.city}}</div>
+          <div  ng-repeat="contact in business.contactPersons">
+          <div class="item item-icon-left"><i class="icon ion-person royal"></i> {{contact.firstName}} {{contact.lastName}} ({{contact.type}})</div>
+          <div class="item item-icon-left"><i class="icon ion-email calm"></i>  {{contact.email}}</div>
+          <div><a class="item item-icon-left" ng-href="tel: {{contact.phone}}"> <i class="icon ion-ios-telephone-outline"></i>Click-to-Call {{contact.phone}}</a></div>
+
+        </div>
+      </ion-item>
+        <!--ion-item ui-sref="app.team({businessId: business.id})" >Business Contacts</ion-item-->
+        <div class="item item-body">
           <p>
             <a href="#" class="subdued">{{business.likes.length}} Likes</a>
-              <a ng-click="toggleReviews()" class="subdued">{{business.reviews.length}} Reviews</a>
+              <a ng-click="toggleReviews()" class="subdued">{{business.reviews.length}} Reviews (Click-to <i class = "icon ion-arrow-expand"></i>)</a>
           </p>
         </div>
         <!--ion-nav-view-->
@@ -43,17 +50,6 @@
       <div class="item tabs tabs-secondary tabs-icon-left" ng-hide="isAuthenticated()">
         <a ui-sref="app.login" style="margin:0px 2px 0 2px;">Login</a> or <a ui-sref="app.signup" style="margin:0px 2px 0 2px;">Sign up</a> to like and review
       </div>
-      <!--This section displays all the views for that business-->
-      <div ng-show="reviews_display">
-          <ion-item class="subdued">{{business.likes.length}} people like this</ion-item>
-            <ion-list>
-              <ion-item class="item item-body" ng-repeat="review in business.reviews">
-                <p>{{review.rating}} Stars</p>
-                <p>{{review.comment}}</p>
-                <p> - {{review.author}}</p>
-              </ion-item>
-          </ion-list>
-      </div>
       <!--Section below adds profile pic and comment section-->
       <div ng-show="review_rating">
         <form  name="reviewForm" ng-submit="submitReview(business)">
@@ -70,18 +66,28 @@
               <input type="text" ng-model="review.comment" placeholder="Enter comment">
             </label>
 
-            <label  class="item-input-wrapper">
             <select ng-model="review.rating" ng-options="stars for stars in [5,4,3,2,1] " title="Stars">
-              <option value="">Rate Business</option>
+              <option value="">Rate</option>
             </select>
-
-            </label>
           </div>
             <button class="button button-stable button-block" ng-disabled="reviewForm.$invalid">
-              Rate
+              Rate Business
             </button>
       </form>
     </div>
+      <!--This section displays all the views for that business-->
+      <div ng-show="reviews_display">
+          <ion-item class="subdued">{{business.likes.length}} people like this</ion-item>
+            <ion-list>
+              <ion-item class="item item-body" ng-repeat="review in business.reviews">
+                <p>{{review.rating}} Stars</p>
+                <p>{{review.comment}}</p>
+                <p> - {{review.author}}</p>
+              </ion-item>
+          </ion-list>
+      </div>
+
+
     </ion-list>
     <!--div ng-show="filterBarStatus == 'dirty' && !businesses.length" class="no-results" ng-cloak>
      <no-results></no-results>

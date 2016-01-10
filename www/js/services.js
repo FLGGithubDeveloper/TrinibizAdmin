@@ -61,18 +61,6 @@ angular.module('trinibiz.services', [])
   return authService;
 })
 
-.factory('AppActions', function() {
-    return {
-      like: "like",
-      review: "review",
-      call: "call",
-      email: "email",
-      login: "login",
-      signup: "signup",
-      logout: "logout",
-      view_profile: "view_profile"
-    };
-})
 .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
     return {
       responseError: function (response) {
@@ -87,6 +75,22 @@ angular.module('trinibiz.services', [])
     };
 })
 
+.factory('AppActions', function() {
+    return {
+      like: "like",
+      review: "review",
+      call: "call",
+      email: "email",
+      login: "login",
+      signup: "signup",
+      logout: "logout",
+      view_profile: "view_profile",
+      view_settings: "view_settings",
+      view_terms: "view_terms",
+      view_invite: "view_invite"
+    };
+})
+
 .factory('AppViews', function() {
     return {
       menu: "menu",
@@ -95,17 +99,20 @@ angular.module('trinibiz.services', [])
       categories: "categories",
       signup: "signup",
       login: "login",
-      noresults: "noresults"
+      settings: "settings",
+      noresults: "noresults",
+      terms: "terms",
+      invite:"invite"
     }
 })
 
 .factory('RolesPermissions', ['USER_ROLES', 'AppViews', 'AppActions', function(USER_ROLES, AppViews, AppActions) {
     var abilities = {}
-    abilities[USER_ROLES.user] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppActions.like,
-      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile
+    abilities[USER_ROLES.user] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
+      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
     ];
-    abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.menu, AppViews.businesses, AppViews.categories, AppViews.signup, AppViews.login,
-      AppActions.signup, AppActions.login, AppActions.call, AppActions.email
+    abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.menu, AppViews.businesses, AppViews.categories, AppViews.signup, AppViews.login, AppViews.settings, AppViews.terms, AppViews.invite,
+      AppActions.signup, AppActions.login, AppActions.call, AppActions.email, AppActions.view_terms, AppActions.view_invite
     ];
     return abilities;
 }])
@@ -189,15 +196,17 @@ angular.module('trinibiz.services', [])
       return AclService.hasRole(USER_ROLES.owner);
 
     }
-    
-    var register = function(firstname, lastname,username, password, email) {
+
+    var register = function(firstname, lastname,username, password, email, type) {
+
       var user = new ParseFactory.User();
       user.set("firstName", firstname);
       user.set("lastName", lastname);
       user.set("username", username);
       user.set("password", password);
       user.set("email", email);
-      user.set("type", 'non-owner');
+      user.set("type", type);
+
       return user.signUp(null);
     }
 
@@ -309,6 +318,26 @@ angular.module('trinibiz.services', [])
     return {
       getAllCategories: getAllCategories,
     }
+}])
+
+.service('ContactsService', ['ParseFactory', function(ParseFactory) {
+
+    var getContacts = function(businessId) {
+      var Business = ParseFactory.Object.extend("Business");
+      var query = new ParseFactory.Query(Business);
+      if (businessId !== undefined && businessId !== ""){
+        query.equalTo("objectId", businessId);
+        return query.find().then(function(result){
+          return result[0].get("contactPersons");
+        });
+      }
+      else {
+        return {};
+      }
+    }
+    return {
+      getContacts: getContacts
+    }
   }])
 
 .service('BusinessesService', ['ParseFactory', 'UserService','$ionicLoading','USER_ROLES',        function(ParseFactory, UserService,$ionicLoading,USER_ROLES) {
@@ -316,6 +345,7 @@ angular.module('trinibiz.services', [])
       var items = [];
       var business = {};
       var reviews = [];
+      var contactPersons = [];
       var likes = [];
       for (var i = 0; i < rawBusinesses.length; i++) {
         business.name = rawBusinesses[i].get("name");
@@ -324,6 +354,8 @@ angular.module('trinibiz.services', [])
         business.website = rawBusinesses[i].get("website");
         business.street = rawBusinesses[i].get("street");
         business.city = rawBusinesses[i].get("city");
+        contactPersons = rawBusinesses[i].get("contactPersons");
+        business.contactPersons = contactPersons ? contactPersons : [];
         business.services = rawBusinesses[i].get("Services");
         likes = rawBusinesses[i].get("Likes");
         business.likes = likes ? likes : [];

@@ -1,5 +1,34 @@
 angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
+/*.controller('UpdateProfilePic', function($scope, $ionicActionSheet, $timeout) {
+
+ // Triggered on a button click, or some other target
+ $scope.showPicLoad = function() {
+
+   // Show the action sheet
+   var hideSheet = $ionicActionSheet.show({
+     buttons: [
+       { text: 'Upload Profile Pic' },
+     ],
+     destructiveText: 'Delete',
+     titleText: 'Update Profile Pic',
+     cancelText: 'Cancel',
+     cancel: function() {
+          // add cancel code..
+        },
+     buttonClicked: function(index) {
+       return true;
+     }
+   });
+
+   // For example's sake, hide the sheet after two seconds
+   $timeout(function() {
+     hideSheet();
+   }, 2000);
+
+ };
+});*/
+
 .controller('AppController', function($scope, $ionicFilterBar, $timeout, CategoriesService,ToastService, $ionicLoading, $state) {
 
   $scope.filterBarInstance = "";
@@ -77,7 +106,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
       $ionicLoading.hide();
     }, function(err){
       $ionicLoading.hide();
-      ToastService.showToast("Something went wrong while retrieving data ,, please check your connection.");
+      ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
     });
 
   }
@@ -171,13 +200,63 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 })
 
+.controller('ContactsCtrl', function($scope, $ionicFilterBar, $timeout, ContactsService,ToastService, $ionicLoading, $stateParams) {
 
-.controller('MenuCtrl', function($scope, $location, $ionicHistory, GUEST_USER, USER_ROLES, UserService, AppViews, AppActions) {
+  $scope.filterBarInstance = "";
+  $scope.filterBarStatus = "clean";
+  var scope = this;
+  $scope.contacts = {};
+
+  function getContacts() {
+
+    var items = [];
+    var contacts = {};
+    ContactsService.getContacts($stateParams.businessId).then(function(results) {
+      $ionicLoading.hide();
+      $scope.contacts = results;
+      /*$scope.contacts = result.map(function(c) {
+        return {
+          "firstName": c.get("firstName"),
+          "lastName": c.get("lastName"),
+          "email": c.get("email"),
+          "phone": c.get("phone")
+        }
+      });*/
+    }, function(err){
+      $ionicLoading.hide();
+      ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
+    });
+  }
+
+  $ionicLoading.show();
+  getContacts();
+
+  $scope.showFilterBar = function() {
+    scope.filterBarInstance = $ionicFilterBar.show({
+      items: $scope.contacts,
+      update: function(filteredItems, filteredText) {
+        if(filteredItems.length == 0 && filteredText !== 'undefined'){
+         $state.go('app.noresults');
+          //$location.path("templates/no-results.html")
+        }
+        else{
+          $scope.contacts = filteredItems;
+            $scope.filterBarStatus = "dirty";
+        }
+      },
+      filterProperties: ['firstName, lastName']
+    });
+  }
+
+})
+
+.controller('MenuCtrl', function($scope, $location, $ionicHistory, GUEST_USER, USER_ROLES, UserService, AppViews, AppActions, $ionicActionSheet, $timeout) {
 
   $scope.can = UserService.can;
   $scope.appViews = AppViews;
   $scope.appActions = AppActions;
   $scope.user = UserService.getUser;
+  //$scope.profileImageUrl = "assets/\//img/\//categories/\//guestUser.jpg";
 
 
   $scope.logOut = function() {
@@ -201,15 +280,48 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
     return UserService.isOwner();
   }
 
+  // Triggered on a button click, or some other target
+  $scope.showPicLoad = function() {
+
+    // Show the action sheet
+    var hideSheet =  $ionicActionSheet.show({
+      /*titleText: 'Update Profile Pic',
+      buttons: [
+        { text: '<i class="icon ion-upload"></i>Upload Profile Pic' }
+      ],
+
+      cancelText: 'Cancel',
+      cancel: function() {
+           // add cancel code..
+         },
+      buttonClicked: function(index) {
+        return true;
+      }*/
+    });
+
+    // For example's sake, hide the sheet after two seconds
+    $timeout(function() {
+      hideSheet();
+    }, 4000);
+
+  };
+
 })
 
 .controller('RegistrationCtrl', function($scope, $state, $cordovaOauth, $ionicPlatform,$ionicHistory, UserService, ToastService) {
+
     $scope.data = {};
+
     $scope.signupEmail = function() {
-      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username)
+      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username, $scope.data.type)
         .then(function(user) {
           ToastService.showToast('Please check your email to verify your account');
-          $state.go('app.login');
+          if($scope.data.type == "Regular"){
+            $state.go('app.login');
+          }
+          else{
+            $state.go('app.invite');
+          }
           $ionicHistory.nextViewOptions({
          disableBack: true
        });
@@ -218,6 +330,10 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
             ToastService.showToast(error.message);
           });
         });
+    }
+
+    $scope.isAuthenticated = function(){
+      return UserService.hasRole(USER_ROLES.user);
     }
   })
 
@@ -257,26 +373,26 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
         }
   };
 
-$scope.resetPassword = function(email) {
-  UserService.resetPassword(email);
-}
-
-$scope.loginFacebook = function() {
-
-  if (!(ionic.Platform.isIOS() || ionic.Platform.isAndroid())) {
-    var message = UserService.loginFacebook();
-    $ionicPlatform.ready(function(){
-        $cordovaToast(message, 'long', 'center').then(function(success) {
-            // success
-        }, function (error) {
-      // error
-        });
-
-	  });
-  } else { //Native Login
-    UserService.loginFacebookMobile();
+  $scope.resetPassword = function(email) {
+    UserService.resetPassword(email);
   }
-}
+
+  $scope.loginFacebook = function() {
+
+    if (!(ionic.Platform.isIOS() || ionic.Platform.isAndroid())) {
+      var message = UserService.loginFacebook();
+      $ionicPlatform.ready(function(){
+          $cordovaToast(message, 'long', 'center').then(function(success){
+            // success
+          }, function (error) {
+          // error
+          });
+
+	    });
+    }else { //Native Login
+      UserService.loginFacebookMobile();
+    }
+  }
 })
 
 .controller('ProfileCtrl', function($scope) {

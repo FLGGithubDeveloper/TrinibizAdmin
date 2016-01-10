@@ -101,6 +101,27 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
         }]
       }
     })
+    .state('app.team', {
+      url: '/team:businessId',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/team.html',
+          controller: 'ContactsCtrl',
+          //controllerAs: 'contacts'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.team)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
     .state('app.signup', {
       url: '/signup',
       views: {
@@ -154,6 +175,60 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
       resolve : {
         'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
           if(AclService.can(AppViews.profile)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    }).state('app.terms', {
+      url: "/terms",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/terms.html",
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.terms)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    }).state('app.invite', {
+      url: "/invite",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/invite.html",
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.invite)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    }).state('app.settings', {
+      url: "/settings",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/settings.html"
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.settings)){
             // Has proper permissions
             return true;
           } else {

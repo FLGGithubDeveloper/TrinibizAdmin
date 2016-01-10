@@ -21,12 +21,12 @@
                   </label>
 
                 <label span class="item item-input">
-                    <input type="password" name="password" placeholder="At least 6 characters" ng-model="data.password" ng-minlength="6" required>
+                    <input type="password" name="password" placeholder="Enter Password - At least 6 characters" ng-model="data.password" ng-minlength="6" required>
                     <span ng-messages="signUpForm.password.$error" ng-messages-include="templates/app_messages.html"></span>
                 </label>
 
                 <label span class="item item-input">
-                    <input type="password" name="confirmPassword" placeholder="Must match with password" ng-model="data.confirmPassword" ng-minlength="6" required compare-to="data.password" />
+                    <input type="password" name="confirmPassword" placeholder="Confirm password - Same as password" ng-model="data.confirmPassword" ng-minlength="6" required compare-to="data.password" />
                     <span ng-messages="signUpForm.confirmPassword.$error" ng-messages-include="templates/app_messages.html"></span>
                 </label>
 
