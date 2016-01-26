@@ -41,6 +41,26 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
         }]
       }
     })
+    .state('app.registerBiz', {
+      url: '/registerBiz',
+      views:{
+        'menuContent': {
+        templateUrl: 'templates/registerBiz.html',
+        controller: 'RegisterBizCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.registerBiz)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
     .state('app.businesses', {
       url: "/businesses/:categoryId?categoryName",
       views: {
@@ -100,7 +120,7 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
           }
         }]
       }
-    })
+    })/*
     .state('app.team', {
       url: '/team:businessId',
       views: {
@@ -121,7 +141,7 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
           }
         }]
       }
-    })
+    })*/
     .state('app.signup', {
       url: '/signup',
       views: {

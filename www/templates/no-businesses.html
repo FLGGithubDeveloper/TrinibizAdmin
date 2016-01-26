@@ -2,14 +2,7 @@
     <ion-item>
       <div class="item item-body">
         <img class="full-image" ng-src="assets\img\categories\GrandOpening.jpg">
-        <h2>There are no businesses in this category.</h2>
-        <h3>Be the first to register your business in this category.</h3>
-        <h3>To register your business, please send the following info to invite@trinibiz.com</h3>
-        <ul class="list-card">
-          <li>-Name and address of business</li>
-          <li>-Email, phone contact and fax #(fax not required)</li>
-          <li>-Website and Facebook Page (not required)</li>
-          <li>-Services provided</li>
-        </ul>
+        <h2 class="positive">There are no businesses in this category.</h2>
+        <a ui-sref="app.invite" ng-show="can(appViews.invite)">Join TriniBiz</a>
       </div>
 </ion-list>

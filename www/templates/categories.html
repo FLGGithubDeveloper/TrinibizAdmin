@@ -1,4 +1,4 @@
-<ion-view view-title="Categories" name="businesses">
+<ion-view view-title="Categories" name="categories">
 
 
   <ion-nav-buttons side="secondary">
@@ -9,7 +9,7 @@
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="category in categories | orderBy: 'name'" ui-sref="app.businesses({categoryId: category.id, categoryName: category.name})">
-      <img ng-src="assets\img\categories\{{category.name}}.jpg" >
+      <img class="category-pic" ng-src="assets\img\categories\{{category.name}}.jpg" >
       <span ng-bind="category.name"><span>
       </ion-item>
     </ion-list>

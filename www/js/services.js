@@ -83,6 +83,7 @@ angular.module('trinibiz.services', [])
       email: "email",
       login: "login",
       signup: "signup",
+      registerBiz: "registerBiz",
       logout: "logout",
       view_profile: "view_profile",
       view_settings: "view_settings",
@@ -102,13 +103,20 @@ angular.module('trinibiz.services', [])
       settings: "settings",
       noresults: "noresults",
       terms: "terms",
-      invite:"invite"
+      invite:"invite",
+      registerBiz: "registerBiz"
     }
 })
 
 .factory('RolesPermissions', ['USER_ROLES', 'AppViews', 'AppActions', function(USER_ROLES, AppViews, AppActions) {
     var abilities = {}
-    abilities[USER_ROLES.user] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
+    abilities[USER_ROLES.user] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite, AppViews.registerBiz,
+      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite, AppActions.registerBiz
+    ];
+    abilities[USER_ROLES.owner] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
+      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
+    ];
+    abilities[USER_ROLES.sprovider] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
       AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
     ];
     abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.menu, AppViews.businesses, AppViews.categories, AppViews.signup, AppViews.login, AppViews.settings, AppViews.terms, AppViews.invite,
@@ -134,7 +142,7 @@ angular.module('trinibiz.services', [])
   }
 }])
 
-.service('UserService', ['$rootScope', 'AclService', 'ParseFactory','USER_ROLES', function($rootScope, AclService, ParseFactory,USER_ROLES) {
+.service('UserService', ['$rootScope', 'AclService','ToastService', 'ParseFactory','USER_ROLES', function($rootScope, AclService,ToastService, ParseFactory,USER_ROLES) {
     var hasRole = AclService.hasRole;
     var flushRoles = AclService.flushRoles;
     var attachRole = AclService.attachRole;
@@ -160,10 +168,19 @@ angular.module('trinibiz.services', [])
     var initialiseSession = function(user) {
       setUser(user);
       flushRoles();
-      attachRole(USER_ROLES.user);
+      //attachRole(USER_ROLES.user);
       if(getUser().type == USER_ROLES.owner){
         attachRole(USER_ROLES.owner);
       }
+      else{
+        if(getUser().type == USER_ROLES.sprovider){
+          attachRole(USER_ROLES.sprovider);
+        }
+        else{
+            attachRole(USER_ROLES.user);
+        }
+      }
+
     }
     var logOut = function() {
       ParseFactory.User.logOut();
@@ -175,13 +192,21 @@ angular.module('trinibiz.services', [])
       ParseFactory.User.logIn(username, password, {
         success: function(user) {
           ParseFactory.User.become(user.getSessionToken()).then(function(user) {
-            initialiseSession(user);
-            success(user);
+          //  if(user.get("emailVerified")){
+              initialiseSession(user);
+              success(user);
+        //    }
+          /*  else{
+              alert("Please verify your email address to login");
+            }*/
+
           }, function(error) {
             alert("The session was not initialised")
           });
         },
-        error: error
+        error: function(user,error){
+          alert('Error: '+error.message);
+        }
       });
     }
 
@@ -197,7 +222,17 @@ angular.module('trinibiz.services', [])
 
     }
 
-    var register = function(firstname, lastname,username, password, email, type) {
+    var isSProvider = function(){
+      return AclService.hasRole(USER_ROLES.sprovider);
+
+    }
+
+    var isRegular = function(){
+      return AclService.hasRole(USER_ROLES.user);
+
+    }
+
+    var register = function(firstname, lastname,username, password, email, usertype) {
 
       var user = new ParseFactory.User();
       user.set("firstName", firstname);
@@ -205,9 +240,18 @@ angular.module('trinibiz.services', [])
       user.set("username", username);
       user.set("password", password);
       user.set("email", email);
-      user.set("type", type);
+      user.set("type", usertype);
 
-      return user.signUp(null);
+        return user.signUp(null,{
+        success: function(user) {
+      // Hooray! Let them use the app now.
+        ToastService.showToast("Success!, Please check your email to verify your account");
+      },
+        error: function(user, error) {
+        // Show the error message somewhere and let the user try again.
+        alert("Error: " + error.code + " " + error.message);
+      }
+      });
     }
 
     var resetPassword = function(email) {
@@ -298,6 +342,8 @@ angular.module('trinibiz.services', [])
       flushRoles: flushRoles,
       attachRole: attachRole,
       isOwner: isOwner,
+      isSProvider: isSProvider,
+      isRegular: isRegular,
       can: can,
       logOut: logOut,
       logIn: login,
@@ -340,7 +386,35 @@ angular.module('trinibiz.services', [])
     }
   }])
 
-.service('BusinessesService', ['ParseFactory', 'UserService','$ionicLoading','USER_ROLES',        function(ParseFactory, UserService,$ionicLoading,USER_ROLES) {
+.service('BusinessesService', ['ParseFactory', 'UserService','$ionicLoading','USER_ROLES',function(ParseFactory, UserService,$ionicLoading,USER_ROLES) {
+    var registerBiz = function(owner,usertype,name,street,email,phone,fax,website,facebook,services){
+
+        var Business = Parse.Object.extend("Business");
+        var biz = new Business();
+
+        biz.set("owner", owner);
+        biz.set("name", name);
+        biz.set("street", street);
+        biz.set("email", email);
+        biz.set("phone", phone);
+        biz.set("fax", fax);
+        biz.set("website", website);
+        biz.set("facebook", facebook);
+        biz.set("services", services);
+
+        biz.save(null, {
+        success: function(biz) {
+          // Execute any logic that should take place after the object is saved.
+        alert('Congratulations! You are now officially a TriniBizzer');
+        },
+        error: function(biz, error) {
+          // Execute any logic that should take place if the save fails.
+          // error is a Parse.Error with an error code and message.
+          alert('Failed to register new Biz ' +              error.message);
+        }
+      });
+
+    }
     var mapBusinesses = function(rawBusinesses){//function to process the businesses for use in the app
       var items = [];
       var business = {};
@@ -431,9 +505,86 @@ angular.module('trinibiz.services', [])
         return mappedBusinesses;
       });
     }
+    /*
+    var mapSProviders = function(rawSProviders){//function to process the businesses for use in the app
+      var items = [];
+      var sprovider = {};
+      var reviews = [];
+      var contactPersons = [];
+      var likes = [];
+      for (var i = 0; i < rawSProviders.length; i++) {
+        sprovider.id = rawSProviders[i].id;
+        sprovider.phone = rawSProviders[i].get("phone");
+        sprovider.website = rawSProviders[i].get("website");
+        sprovider.street = rawSProviders[i].get("street");
+        sprovider.city = rawSProviders[i].get("city");
+        contactPersons = rawSProviders[i].get("contactPersons");
+        sprovider.contactPersons = contactPersons ? contactPersons : [];
+        sprovider.services = rawSProviders[i].get("Services");
+        likes = rawSProviders[i].get("Likes");
+        sprovider.likes = likes ? likes : [];
+        if (UserService.hasRole(USER_ROLES.user)) {
+          if (sprovider.likes.length !== 0 || sprovider.likes !== undefined) {
+            for (var j = 0; j < sprovider.likes.length; j++) {
+              if (UserService.getUser().username.localeCompare(sprovider.likes[j]) == 0) {
+                //if username exists in likes array, setup like settings on view
+                sprovider.liked = "Unlike";
+                sprovider.hasLiked = UserService.getUser().username; //set to this sessions username
+                break;
+              }
+            }
+            if (sprovider.liked == undefined) { //All the likes are not from this user.
+              sprovider.liked = "Like";
+              sprovider.hasLiked = {}; //set to empty object
+            }
+          } else { //business had no likes. Means business was never liked by the user
+            sprovider.liked = "Like";
+            sprovider.hasLiked = {}; //set to empty object
+          }
+        }
+        reviews = rawSProviders[i].get("Reviews");
+        sprovider.reviews = reviews ? reviews : []; //business.reviews is referenced in view. Each business object in the scope has 0 or more reviews in them
+        items.push(sprovider);
+        sprovider = {}; //clear business object for next iteration
+      }
+      return items;
+    }
+
+    var getServiceProfiles = function(categoryId,sprovider) {//function to get businesses through either query to backend database or localStorage
+      var ServiceProvider = ParseFactory.Object.extend("ServiceProvider");
+      var query = new ParseFactory.Query(ServiceProvider);
+      if (categoryId !== undefined && categoryId !== "") {
+        var category = {
+          "__type": "Pointer",
+          "className": "BusinessCategory",
+          "objectId": categoryId
+        };
+        query.equalTo("category", category);
+      }else if (Boolean(sprovider) == true) {
+        //parameter that tells the service that its a query for the service provider's profile
+        var userId = UserService.getUserId();
+        var sprovider = {
+          "__type": "Pointer",
+          "className": "_User",
+          "objectId": userId
+        };
+        query.equalTo("sprovider", sprovider);
+      }
+      return query.find().then(function(results){
+        var mappedSProviders = mapSProviders(results);
+        return mappedSProviders;
+      });
+    }*/
+
     var likeUnlike = function(business) {
-      var Business = ParseFactory.Object.extend("Business");
-      var query = new ParseFactory.Query(Business);
+      if(business == "business"){
+        var Business = ParseFactory.Object.extend("Business");
+        var query = new ParseFactory.Query(Business);
+      }else{
+        var ServiceProvider = ParseFactory.Object.extend("ServiceProvider");
+        var query = new ParseFactory.Query(ServiceProvider);
+      }
+
       var userWhoPressed;
       if (business.hasLiked) {
         userWhoPressed = business.likes.splice(business.hasLiked); //remove this person from like list since they unliked
@@ -455,9 +606,9 @@ angular.module('trinibiz.services', [])
         business.liked = 'Unlike'; //update scope like/unlike action
         //userWhoPressed = business.hasLiked; //record who liked to update remote db
         query.get(business.id, {
-          success: function(biz) {
-            biz.addUnique("Likes", business.hasLiked);
-            biz.save();
+          success: function(this_business) {
+            this_business.addUnique("Likes", business.hasLiked);
+            this_business.save();
           },
           error: function(object, error) {
 
@@ -465,13 +616,14 @@ angular.module('trinibiz.services', [])
         });
       }
     }
-    var submitReview = function(business, review,callback) {
+    var submitReview = function(business, review,datetime,callback) {
       review.author = UserService.getUser().username;
       business.reviews.push(review);
       var review_to_send = {};
       review_to_send["comment"] = review.comment;
       review_to_send["rating"] = Number(review.rating);
       review_to_send["author"] = UserService.getUser().username;
+      review_to_send["datetime"] = datetime;
       var id = business.id;
 
       var Business = ParseFactory.Object.extend("Business");
@@ -489,6 +641,7 @@ angular.module('trinibiz.services', [])
     }
     return {
       getBusinesses: getBusinesses,
+      registerBiz:  registerBiz,
       likeUnlike: likeUnlike,
       submitReview: submitReview
     }

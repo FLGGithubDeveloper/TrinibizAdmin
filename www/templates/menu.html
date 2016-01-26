@@ -1,7 +1,7 @@
 <ion-side-menus enable-menu-with-back-views="false">
   <ion-side-menu-content>
 
-    <ion-nav-bar class="bar-positive">
+    <ion-nav-bar class="bar-dark">
       <ion-nav-back-button>
       </ion-nav-back-button>
 
@@ -16,45 +16,61 @@
   </ion-side-menu-content>
 
   <ion-side-menu side="left">
-    <ion-header-bar class="bar-positive">
+    <ion-header-bar class="bar bar-dark">
       <h1 class="title">Menu</h1>
     </ion-header-bar>
-    <ion-content>
+    <ion-content class="dark">
       <ion-list>
-          <ion-item class="item item-thumbnail-left" ng-show ="isAuthenticated()">
+          <ion-item class ="item item-thumbnail-left" ng-show ="isAuthenticated()">
               <img class="profile-pic" src="assets\img\categories\guestUser.jpg" ng-src="{{user().profilePic.url()}}" ng-clicked="showPicLoad()">
-              <a menu-close ui-sref="app.profile" ng-show="can(appViews.profile)"><h2>{{user().firstName}}</h2>
-              </a>
-              <p>{{user().type}}</p>
-              <div>
-                <button menu-close ui-sref="app.userbusinesses({ownerBusinesses: 'true',categoryId: null, categoryName: null})" class="button button-small button-positive" ng-show="isOwner()">
+
+              <div style="padding-left:100px;">
+                <a class="item-dark" menu-close ui-sref="app.profile" ng-show="can(appViews.profile)">
+                  <h2>{{user().firstName}}</h2>
+                </a>
+                <p>{{user().type | uppercase}}</p>
+
+                <button menu-close ui-sref="app.userbusinesses({ownerBusinesses: 'true',categoryId: null, categoryName: null})" class="button button-small button-positive" ng-show="isSupplier()">
                   Biz Portfolio
+                </button>
+
+                <button menu-close ui-sref="app.registerBiz" class="button button-small button-assertive" ng-show="can(appViews.registerBiz)">
+                  Add a Biz
                 </button>
               </div>
               <b class="caret"></b>
           </ion-item>
+
           <ion-item class="item item-thumbnail-left" ng-show="isGuest()">
-              <img ng-src="assets\img\categories\guestUser.jpg">
-              <span>Guest User</span>
+              <img class="profile-pic" ng-src="assets\img\categories\guestUser.jpg">
+              <span style="padding-left:100px;">Guest User</span>
               <b class="caret"></b>
           </ion-item>
 
-        <ion-item menu-close ui-sref="app.categories" ng-show="can(appViews.categories)">
+        <ion-item class="item-dark" menu-close ui-sref="app.categories" ng-show="can(appViews.categories)">
           Categories
         </ion-item>
-        <ion-item menu-close ui-sref="app.allbusinesses" ng-show="can(appViews.businesses)">
+
+        <ion-item class="item-dark" menu-close ui-sref="app.allbusinesses" ng-show="can(appViews.businesses)">
           Businesses
         </ion-item>
-          <ion-item menu-close ui-sref="app.login" ng-show="can(appViews.login)">
+
+          <ion-item class="item-dark" menu-close ui-sref="app.login" ng-show="can(appViews.login)">
           <i class="icon ion-log-in"> Login</i>
           </ion-item>
-          <ion-item menu-close ui-sref="app.signup" ng-show="can(appViews.signup)">
+
+          <ion-item class="item-dark" menu-close ui-sref="app.signup" ng-show="can(appViews.signup)">
           <i class="icon ion-ios-person"> Sign Up</i>
           </ion-item>
-          <ion-item menu-close ui-sref="app.settings" ng-show="can(appViews.settings)"><i class="icon ion-gear-a"> Settings</i></ion-item>
-          <ion-item ng-show="can(appActions.logout)" menu-close ng-click="logOut()">
+
+          <ion-item class="item-dark" menu-close ui-sref="app.settings" ng-show="can(appViews.settings)">
+            <i class="icon ion-gear-a"> Settings</i>
+          </ion-item>
+
+          <ion-item class="item-dark" menu-close href="#" ng-click="logOut()" ng-show="can(appActions.logout)">
           <i class="icon ion-log-out"> Logout</i>
           </ion-item>
+
       </ion-list>
     </ion-content>
   </ion-side-menu>

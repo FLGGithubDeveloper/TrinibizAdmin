@@ -1,6 +1,49 @@
 /* Empty. Add your own CSS if you like */
 
 /*@import "compass/css3";*/
+@import "lesshat";
+
+body {
+  cursor: url("http://ionicframework.com/img/finger.png"), auto;
+}
+
+.dark {
+  background-color: #3f4041 !important;
+  color: #ffffff;
+}
+.dark .scroll-content {
+  background-color: #3f4041 !important;
+}
+.dark .item {
+  background-color: #444;
+  border: none;
+  border-top: 1px solid #464646;
+  border-bottom: 2px solid #333333;
+  padding: 20px;
+  color: #F0F1F1;
+  max-height: none;
+}
+.dark .item:last-child {
+  border-bottom: 1px solid #333333;
+}
+.dark .item.current {
+  background-color: #262727 !important;
+  border-top: 1px solid #464646 !important;
+  border-bottom: 2px solid #333333 !important;
+}
+.dark .item.current p, .dark .item.current h3 {
+  opacity: .7;
+}
+.dark h2,
+.dark h3,
+.dark p,
+.dark a {
+  color: #F0F1F1;
+}
+
+.dark-head {
+  text-decoration: none;
+}
 
 @import url(http://fonts.googleapis.com/css?family=Merriweather+Sans);
  div.social-wrap button {
@@ -24,6 +67,8 @@
     box-shadow: 0 4px 2px -2px gray;
     text-shadow: rgba(0, 0, 0, .5) -1px -1px 0;
 }
+
+
 button#facebook {
     border-color: #2d5073;
     background-color: #3b5998;
@@ -56,6 +101,10 @@ button#facebook {
     color: #1c70f8;
     font-style: italic;
     font-size: 30px;
+}
+
+.menu.list a {
+border-color: transparent;
 }
 
 blockquote {
@@ -106,6 +155,13 @@ input.ng-valid {
     border-radius: 50% 50%;
 }
 
+.category-pic {
+    position: relative;
+    top: 10px;
+    width : 50px;
+    height : 50px;
+}
+
 .review-profile-pic {
     width : 40px;
     height : 40px;
@@ -123,4 +179,88 @@ input.ng-valid {
   height: 28px;
   stroke: #999;
   fill: #999;
+}
+
+ul.rating li {
+  display: inline;
+  border: 0px;
+  background: none;
+  padding: 5px 10px;
+}
+ul.rating li i {
+  font-size: 30px;
+}
+
+.review_input h3 {
+  white-space: normal !important;
+}
+/*
+.star-ratings-css {
+  unicode-bidi: bidi-override;
+  color: #c5c5c5;
+  font-size: 25px;
+  height: 25px;
+  width: 100px;
+  margin: 0 auto;
+  position: relative;
+  padding: 0;
+  text-shadow: 0px 1px 0 #a2a2a2;
+}
+
+.star-ratings-css-top {
+  color: #e7711b;
+  padding: 0;
+  text-shadow: 0px 1px 0 #ab5414;
+  position: absolute;
+  z-index: 1;
+  display:block;
+  left: 0px;
+  overflow: hidden;
+}
+.star-ratings-css-bottom { z-index: 0; }*/
+
+/*
+  .rating {
+    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
+    background-position: 0 100%;
+    float: left;
+    height: 21px;
+    display:block;
+  }/*
+
+/*Error Handling for form views*/
+
+.error-container {
+  margin: 5px 0;
+}
+
+.error-container:last-child {
+    margin: 5px 0 0;
+}
+
+.error {
+  padding: 10px 16px;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #555;
+  vertical-align: middle;
+}
+
+.error i {
+  font-size: 18px;
+  color: #B83E2C;
+  vertical-align: middle;
+}
+
+.last-error-container > .error {
+  padding: 10px 16px 0;
+}
+
+.has-errors {
+  border-bottom: 3px solid #B83E2C;
+}
+
+.no-errors {
+  border-bottom: 3px solid green;
 }

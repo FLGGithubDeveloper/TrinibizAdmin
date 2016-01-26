@@ -4,6 +4,7 @@
 angular.module('trinibiz', [
   'ionic',
   'ionic-toast',
+  'ionic.rating',
   'trinibiz.controllers',
   'trinibiz.directives',
   'trinibiz.services',
@@ -24,9 +25,10 @@ angular.module('trinibiz', [
 })
 .constant("GUEST_USER",{role: 'guest',user: null})
 .constant("USER_ROLES", {
-    user: 'user',
+    user: 'regular',
     guest: 'guest',
     owner: 'owner',
+    sprovider: 'service provider',
 })
 .constant('$ionicLoadingConfig', {
   template: '<p class="item-icon-left">Loading...<ion-spinner icon="lines"/></p>',
@@ -37,7 +39,7 @@ angular.module('trinibiz', [
 
 .run(['$ionicPlatform','$rootScope','USER_ROLES', 'GUEST_USER','AclService','RolesPermissions','UserService' , (function($ionicPlatform,$rootScope,USER_ROLES, GUEST_USER,AclService,RolesPermissions,UserService) {
 
-Parse.initialize("Xf0pO13G4G4nM3Y0yh39Iup7XmwL1tdh9yTiYygP","1LcUYGybK7YM1tXUvGGGxxQyYdz2Zd9DFlASWacA");
+Parse.initialize("QjbA9I9QfG8ezwEpWjGgyh4xxGJGMQzzo0HISCtZ","vELvekFTQGbDksDZWaoDudqPnZYc7ILyPFhNVmmA");
 
 AclService.setAbilities(RolesPermissions);
 

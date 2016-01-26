@@ -84,7 +84,13 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.appActions = AppActions;
   $scope.appViews = AppViews;
 
+  // set the rate and max variables
   $scope.review = {};
+  $scope.review.rating = 3;
+  $scope.review.max = 5;
+  $scope.readOnly = true
+
+  //$scope.review = {};
   $scope.businesses = {};
   $scope.filterBarInstance = "";
   $scope.filterBarStatus = "clean";
@@ -111,8 +117,12 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
   }
 
+
   $ionicLoading.show();
   getBusinesses();
+  //getSProviders();
+
+  $scope.getDatetime = new Date();
 
   $scope.showPopup = function(business){
     var myPopup = $ionicPopup.show({
@@ -193,7 +203,8 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   };
 
   $scope.submitReview = function(business) {
-    BusinessesService.submitReview(business, $scope.review,function(){
+    var datetime = new Date();
+    BusinessesService.submitReview(business, $scope.review,datetime,function(){
 			$scope.review = {};
 		});
   };
@@ -273,11 +284,24 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   }
 
   $scope.isAuthenticated = function(){
-    return UserService.hasRole(USER_ROLES.user);
+    return UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
+    UserService.hasRole(USER_ROLES.owner);
   }
 
   $scope.isOwner = function() {
     return UserService.isOwner();
+  }
+
+  $scope.isSProvider = function() {
+    return UserService.isSProvider();
+  }
+
+  $scope.isRegular = function() {
+    return UserService.hasRole(USER_ROLES.user);
+  }
+
+  $scope.isSupplier = function(){
+    return UserService.isSProvider() || UserService.isOwner();
   }
 
   // Triggered on a button click, or some other target
@@ -308,20 +332,36 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 })
 
+.controller('RegisterBizCtrl', function($scope, $state,$ionicHistory, ToastService){
+  $scope.data = {};
+
+  $scope.userTypeList = [
+  { text: "Business Owner", value: "owner" },
+  { text: "Service Provider", value: "sprovider" }
+];
+
+  $scope.registerBiz = function(){
+    var id = UserService.getUserId;
+    BusinessService.registerBiz(id, $scope.data.usertype,$scope.data.name,$scope.data.street,$scope.data.email,$scope.data.phone,$scope.data.fax,$scope.data.website,$scope.data.facebook,$scope.data.services);
+
+    $ionicHistory.nextViewOptions({
+      disableBack:true
+    });
+
+    $state.go('app.categories');
+  }
+
+})
 .controller('RegistrationCtrl', function($scope, $state, $cordovaOauth, $ionicPlatform,$ionicHistory, UserService, ToastService) {
 
     $scope.data = {};
 
+
     $scope.signupEmail = function() {
-      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username, $scope.data.type)
+      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username,$scope.data.usertype)
         .then(function(user) {
-          ToastService.showToast('Please check your email to verify your account');
-          if($scope.data.type == "Regular"){
+        /*  ToastService.showToast('Please check your email to verify your account');*/
             $state.go('app.login');
-          }
-          else{
-            $state.go('app.invite');
-          }
           $ionicHistory.nextViewOptions({
          disableBack: true
        });
@@ -347,10 +387,16 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
         $ionicHistory.nextViewOptions({
           disableBack: true
         });
-        $state.go('app.categories');
+        if(UserService.isOwner() || UserService.isSProvider()){
+          $state.go('app.categories');
+        }
+        else{
+          $state.go('app.businesses');
+        }
+
         var message = 'Welcome to TriniBiz, '+$scope.data.username+'.';
         $ionicPlatform.ready(function(){
-            ToastService.showToast('Welcome to TriniBiz, '+$scope.data.username+'.');
+            ToastService.showToast(message);
         })
 
       },

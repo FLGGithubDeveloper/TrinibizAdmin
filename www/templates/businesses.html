@@ -14,7 +14,7 @@
         <p>
           <img class="full-image" ng-src="assets\img\categories\placeholder.jpg">
         </p>
-        <ion-item class="card item-text-wrap">
+        <!--ion-item class="card item-text-wrap"-->
           <div class="item item-icon-left"><i class="icon ion-bowtie dark"></i> {{business.services}}</div>
           <div class="item item-icon-left"><a href="{{business.website}}"><i class="icon ion-earth balanced"></i>{{business.website}}</a></div>
           <div class="item item-icon-left"><i class="icon ion-location assertive"></i> {{business.street}}, {{business.city}}</div>
@@ -24,7 +24,7 @@
           <div><a class="item item-icon-left" ng-href="tel: {{contact.phone}}"> <i class="icon ion-ios-telephone-outline"></i>Click-to-Call {{contact.phone}}</a></div>
 
         </div>
-      </ion-item>
+      <!--/ion-item-->
         <!--ion-item ui-sref="app.team({businessId: business.id})" >Business Contacts</ion-item-->
         <div class="item item-body">
           <p>
@@ -60,15 +60,15 @@
                 <p> - {{user().username}}</p>
               </ion-item>
           </ion-list>
-          <div class="item item-input-inset">
-            <img class="review-profile-pic" ng-src="{{sessionUser.user.profilePic.url()}}">
-            <label class="item-input-wrapper">
-              <input type="text" ng-model="review.comment" placeholder="Enter comment">
+          <div class="review_input">
+            <div style="background-color: white" class="item-input-wrapper">
+              <img class="review-profile-pic" ng-src="{{sessionUser.user.profilePic.url()}}">
+              <rating ng-model="review.rating" max="review.max"></rating>
+            </div>
+            <label class="item item-input" >
+              <textarea ng-model="review.comment" placeholder="Enter comment"></textarea>
             </label>
 
-            <select ng-model="review.rating" ng-options="stars for stars in [5,4,3,2,1] " title="Stars">
-              <option value="">Rate</option>
-            </select>
           </div>
             <button class="button button-stable button-block" ng-disabled="reviewForm.$invalid">
               Rate Business
@@ -82,6 +82,7 @@
               <ion-item class="item item-body" ng-repeat="review in business.reviews">
                 <p>{{review.rating}} Stars</p>
                 <p>{{review.comment}}</p>
+                <p>{{review.datetime}}</p>
                 <p> - {{review.author}}</p>
               </ion-item>
           </ion-list>
