@@ -1,8 +1,9 @@
 <ion-list>
-    <ion-item>
-      <div class="item item-body">
-        <img class="full-image" ng-src="assets\img\categories\GrandOpening.jpg">
-        <h2 class="positive">There are no businesses in this category.</h2>
-        <a ui-sref="app.invite" ng-show="can(appViews.invite)">Join TriniBiz</a>
-      </div>
+  <div class="item item-body">
+    <img class="full-image" ng-src="assets\img\categories\GrandOpening.jpg">
+    <h2 class="positive">There are no businesses in this category.</h2>
+  </div>
+    <ion-item ng-hide="isSupplier()">
+      <a ui-sref="app.invite" ng-show="can(appViews.invite)">Join TriniBiz</a>
+    </ion-item>
 </ion-list>

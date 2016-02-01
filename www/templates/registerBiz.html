@@ -1,61 +1,89 @@
 <ion-view title="Add your Biz" name="registerBiz-view">
     <ion-content padding="true" align="justify">
       <ion-list>
-          <form class="list" name="registerBizForm" novalidate ng-submit="registerBiz()" >
+          <form class="list" name="registerBizForm" novalidate ng-submit="registerBiz()">
               <!--ion-list-->
-              <div class="list">
-                <ion-item><h3>Choose a Biz category</h3></ion-item>
+              <div>
+                <label class="item item-divider positive">Choose a your role</label>
                 <ion-radio ng-repeat="item in userTypeList" ng-value="item.value" ng-model="data.usertype">{{item.text}}</ion-radio>
 
-                <label class="item item-input item-select">
-                    <div class="input-label">
-                        &nbsp;
-                    </div>
-                    <select ng-repeat="category in categories">
-                        <option>{{category}}</option>
-                    </select>
+                <label for="repeatCategories" class="item item-divider positive">Choose your Biz category</label>
+
+                <select class="item item-select" name="repeatCategories"  id="repeatCategories" ng-options="option.name for option in categories track by option.id"  ng-model="data.category">
+                </select>
+
+                <label class="item item-divider positive">Fill out the form</label>
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.name.$invalid, 'no-errors' : registerBizForm.name.$valid}">
+
+                <input type="text" name="name" placeholder="Enter Business or Service Name" ng-model="data.name" required />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.name.$error" ng-messages-include="templates/app_messages.html"></div >
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.street.$invalid, 'no-errors' : registerBizForm.street.$valid}">
+
+                <input type="text" name="street" placeholder="Enter Street " ng-model="data.street" required />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.street.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.address1.$invalid, 'no-errors' : registerBizForm.address1.$valid}">
+
+                <input type="text" name="address1" placeholder="Enter Address 1" ng-model="data.address1"/>
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.address1.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.address1.$invalid, 'no-errors' : registerBizForm.address1.$valid}">
+
+                <input type="text" name="city" placeholder="Enter City" ng-model="data.city" required />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.city.$error" ng-messages-include="templates/app_messages.html"></div>
+
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.email.$invalid, 'no-errors' : registerBizForm.email.$valid}">
+
+                <input type="email" name="email" placeholder="Enter Biz Email" ng-model="data.email" required />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.email.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.phone.$invalid, 'no-errors' : registerBizForm.phone.$valid}">
+
+                <input type="phone" name="phone" placeholder="Enter Biz phone" ng-model="data.phone" required/>
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.phone.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.phone.$invalid, 'no-errors' : registerBizForm.phone.$valid}">
+
+                <input type="phone" name="mphone" placeholder="Enter Biz mobile phone #" ng-model="data.mphone" required/>
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.mphone.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.fax.$invalid, 'no-errors' : registerBizForm.fax.$valid}">
+
+                <input type="fax" name="fax" placeholder="Enter fax number" ng-model="data.fax" />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.fax.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.website.$invalid, 'no-errors' : registerBizForm.website.$valid}">
+
+                <input type="text" name="website" placeholder="Enter website address" ng-model="data.website" />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.website.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.facebook.$invalid, 'no-errors' : registerBizForm.facebook.$valid}">
+
+                <input type="text" name="facebook" placeholder="Enter facebook page address" ng-model="data.facebook" />
+                </label>
+                <div class="error-container" ng-messages="registerBizForm.facebook.$error" ng-messages-include="templates/app_messages.html"></div>
+
+                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.services.$invalid, 'no-errors' : registerBizForm.services.$valid}">
+
+                <input type="text" name="services" placeholder="Enter services offered" ng-model="data.services" required/>
                 </label>
 
-                <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.name.$invalid, 'no-errors' : registerBizForm.name.$valid}">
-                       <input type="text" name="name" placeholder="Enter Business or Service Name" ng-model="data.name" required />
-                  </label>
-                  <div class="error-container" ng-messages="registerBizForm.name.$error" ng-messages-include="templates/app_messages.html"></div >
-                  <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.street.$invalid, 'no-errors' : registerBizForm.street.$valid}">
-                      <input type="text" name="street" placeholder="Enter Street" ng-model="data.street" required />
-                  </label>
-                  <div class="error-container" ng-messages="registerBizForm.street.$error" ng-messages-include="templates/app_messages.html"></div>
-
-                  <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.email.$invalid, 'no-errors' : registerBizForm.email.$valid}">
-                      <input type="email" name="email" placeholder="Enter Biz Email" ng-model="data.email" required />
-                  </label>
-                  <div class="error-container" ng-messages="registerBizForm.email.$error" ng-messages-include="templates/app_messages.html"></div>
-
-                  <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.phone.$invalid, 'no-errors' : registerBizForm.phone.$valid}">
-                    <input type="phone" name="phone" placeholder="Enter Biz phone" ng-model="data.phone" required/>
-                  </label>
-                  <div class="error-container" ng-messages="registerBizForm.phone.$error" ng-messages-include="templates/app_messages.html"></div>
-
-                  <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.fax.$invalid, 'no-errors' : registerBizForm.fax.$valid}">
-                      <input type="fax" name="fax" placeholder="Enter fax number" ng-model="data.fax" />
-                  </label>
-                  <div class="error-container" ng-messages="registerBizForm.fax.$error" ng-messages-include="templates/app_messages.html"></div>
-
-                      <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.website.$invalid, 'no-errors' : registerBizForm.website.$valid}">
-                          <input type="text" name="website" placeholder="Enter website address" ng-model="data.website" />
-                        </label>
-                          <div class="error-container" ng-messages="registerBizForm.website.$error" ng-messages-include="templates/app_messages.html"></div>
-                        <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.facebook.$invalid, 'no-errors' : registerBizForm.facebook.$valid}">
-                            <input type="text" name="facebook" placeholder="Enter facebook page address" ng-model="data.facebook" />
-                        </label>
-                        <div class="error-container" ng-messages="registerBizForm.facebook.$error" ng-messages-include="templates/app_messages.html"></div>
-                        <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.services.$invalid, 'no-errors' : registerBizForm.services.$valid}">
-                            <input type="text" name="services" placeholder="Enter services offered" ng-model="data.services" required/>
-                        </label>
-                        <div class="error-container" ng-messages="registerBizForm.services.$error" ng-messages-include="templates/app_messages.html"></div>
+                <div class="error-container" ng-messages="registerBizForm.services.$error" ng-messages-include="templates/app_messages.html"></div>
                   <!--/ion-list-->
-                  <button ng-disabled="registerBizForm.$invalid" class="button button-stable button-block">
+                <button ng-disabled="registerBizForm.$invalid" class="button button-stable button-block">
                       Sign up
-                  </button>
+                </button>
               </div>
           </form>
         </ion-list>

@@ -1,7 +1,7 @@
 /* Empty. Add your own CSS if you like */
 
 /*@import "compass/css3";*/
-@import "lesshat";
+/*@import "lesshat";*/
 
 body {
   cursor: url("http://ionicframework.com/img/finger.png"), auto;
@@ -188,7 +188,7 @@ ul.rating li {
   padding: 5px 10px;
 }
 ul.rating li i {
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .review_input h3 {
@@ -217,17 +217,17 @@ ul.rating li i {
   left: 0px;
   overflow: hidden;
 }
-.star-ratings-css-bottom { z-index: 0; }*/
+.star-ratings-css-bottom { z-index: 0; }
 
-/*
+
   .rating {
     background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
     background-position: 0 100%;
     float: left;
     height: 21px;
     display:block;
-  }/*
-
+  }
+*/
 /*Error Handling for form views*/
 
 .error-container {

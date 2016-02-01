@@ -387,25 +387,50 @@ angular.module('trinibiz.services', [])
   }])
 
 .service('BusinessesService', ['ParseFactory', 'UserService','$ionicLoading','USER_ROLES',function(ParseFactory, UserService,$ionicLoading,USER_ROLES) {
-    var registerBiz = function(owner,usertype,name,street,email,phone,fax,website,facebook,services){
+    var registerBiz = function(owner_id,usertype,category_id,name,street,address1,city,email,phone,mphone,fax,website,facebook,services){
 
-        var Business = Parse.Object.extend("Business");
+      var owner = {
+        "__type": "Pointer",
+        "className": "_User",
+        "objectId": owner_id
+      };
+
+      var category = {
+        "__type": "Pointer",
+        "className": "BusinessCategory",
+        "objectId": category_id
+      };
+        var Business = ParseFactory.Object.extend("Business");
         var biz = new Business();
 
         biz.set("owner", owner);
         biz.set("name", name);
+        biz.set("category", category);
         biz.set("street", street);
+        biz.set("address1",address1);
+        biz.set("city",city);
+        biz.set("featured",false);
         biz.set("email", email);
         biz.set("phone", phone);
+        biz.set("mphone",mphone);
         biz.set("fax", fax);
         biz.set("website", website);
         biz.set("facebook", facebook);
         biz.set("services", services);
 
         biz.save(null, {
-        success: function(biz) {
+        success: function(biz,owner) {
           // Execute any logic that should take place after the object is saved.
-        alert('Congratulations! You are now officially a TriniBizzer');
+          var user = ParseFactory.User.current();
+          user.set("type",usertype);
+            user.save(null,{
+              success:function(user){
+                alert('Congratulations! You are now officially a TriniBizzer! The next time you log in your profile will be updated.');
+              },
+              error: function(user,error){
+                alert('Failed to register new Biz ' +              error.message);
+              }
+            });
         },
         error: function(biz, error) {
           // Execute any logic that should take place if the save fails.
@@ -433,7 +458,8 @@ angular.module('trinibiz.services', [])
         business.services = rawBusinesses[i].get("Services");
         likes = rawBusinesses[i].get("Likes");
         business.likes = likes ? likes : [];
-        if (UserService.hasRole(USER_ROLES.user)) {
+        if (UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
+        UserService.hasRole(USER_ROLES.owner)) {
           if (business.likes.length !== 0 || business.likes !== undefined) {
             for (var j = 0; j < business.likes.length; j++) {
               if (UserService.getUser().username.localeCompare(business.likes[j]) == 0) {
@@ -505,85 +531,11 @@ angular.module('trinibiz.services', [])
         return mappedBusinesses;
       });
     }
-    /*
-    var mapSProviders = function(rawSProviders){//function to process the businesses for use in the app
-      var items = [];
-      var sprovider = {};
-      var reviews = [];
-      var contactPersons = [];
-      var likes = [];
-      for (var i = 0; i < rawSProviders.length; i++) {
-        sprovider.id = rawSProviders[i].id;
-        sprovider.phone = rawSProviders[i].get("phone");
-        sprovider.website = rawSProviders[i].get("website");
-        sprovider.street = rawSProviders[i].get("street");
-        sprovider.city = rawSProviders[i].get("city");
-        contactPersons = rawSProviders[i].get("contactPersons");
-        sprovider.contactPersons = contactPersons ? contactPersons : [];
-        sprovider.services = rawSProviders[i].get("Services");
-        likes = rawSProviders[i].get("Likes");
-        sprovider.likes = likes ? likes : [];
-        if (UserService.hasRole(USER_ROLES.user)) {
-          if (sprovider.likes.length !== 0 || sprovider.likes !== undefined) {
-            for (var j = 0; j < sprovider.likes.length; j++) {
-              if (UserService.getUser().username.localeCompare(sprovider.likes[j]) == 0) {
-                //if username exists in likes array, setup like settings on view
-                sprovider.liked = "Unlike";
-                sprovider.hasLiked = UserService.getUser().username; //set to this sessions username
-                break;
-              }
-            }
-            if (sprovider.liked == undefined) { //All the likes are not from this user.
-              sprovider.liked = "Like";
-              sprovider.hasLiked = {}; //set to empty object
-            }
-          } else { //business had no likes. Means business was never liked by the user
-            sprovider.liked = "Like";
-            sprovider.hasLiked = {}; //set to empty object
-          }
-        }
-        reviews = rawSProviders[i].get("Reviews");
-        sprovider.reviews = reviews ? reviews : []; //business.reviews is referenced in view. Each business object in the scope has 0 or more reviews in them
-        items.push(sprovider);
-        sprovider = {}; //clear business object for next iteration
-      }
-      return items;
-    }
-
-    var getServiceProfiles = function(categoryId,sprovider) {//function to get businesses through either query to backend database or localStorage
-      var ServiceProvider = ParseFactory.Object.extend("ServiceProvider");
-      var query = new ParseFactory.Query(ServiceProvider);
-      if (categoryId !== undefined && categoryId !== "") {
-        var category = {
-          "__type": "Pointer",
-          "className": "BusinessCategory",
-          "objectId": categoryId
-        };
-        query.equalTo("category", category);
-      }else if (Boolean(sprovider) == true) {
-        //parameter that tells the service that its a query for the service provider's profile
-        var userId = UserService.getUserId();
-        var sprovider = {
-          "__type": "Pointer",
-          "className": "_User",
-          "objectId": userId
-        };
-        query.equalTo("sprovider", sprovider);
-      }
-      return query.find().then(function(results){
-        var mappedSProviders = mapSProviders(results);
-        return mappedSProviders;
-      });
-    }*/
 
     var likeUnlike = function(business) {
-      if(business == "business"){
         var Business = ParseFactory.Object.extend("Business");
         var query = new ParseFactory.Query(Business);
-      }else{
-        var ServiceProvider = ParseFactory.Object.extend("ServiceProvider");
-        var query = new ParseFactory.Query(ServiceProvider);
-      }
+
 
       var userWhoPressed;
       if (business.hasLiked) {
@@ -616,8 +568,10 @@ angular.module('trinibiz.services', [])
         });
       }
     }
-    var submitReview = function(business, review,datetime,callback) {
+    var submitReview = function(business,review,callback) {
       review.author = UserService.getUser().username;
+      var datetime = new Date();
+      //datetime = $filter('date').(datetime,short);
       business.reviews.push(review);
       var review_to_send = {};
       review_to_send["comment"] = review.comment;

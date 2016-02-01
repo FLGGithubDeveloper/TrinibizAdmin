@@ -88,7 +88,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.review = {};
   $scope.review.rating = 3;
   $scope.review.max = 5;
-  $scope.readOnly = true
+  $scope.readOnly = true;
 
   //$scope.review = {};
   $scope.businesses = {};
@@ -186,7 +186,8 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   };
 
   $scope.isAuthenticated = function() {
-    return UserService.hasRole(USER_ROLES.user);
+    return UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
+    UserService.hasRole(USER_ROLES.owner);
   };
 
   $scope.likeClick = function(business) {
@@ -203,11 +204,13 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   };
 
   $scope.submitReview = function(business) {
-    var datetime = new Date();
-    BusinessesService.submitReview(business, $scope.review,datetime,function(){
+
+    BusinessesService.submitReview(business, $scope.review,function(){
 			$scope.review = {};
 		});
   };
+
+
 
 })
 
@@ -332,23 +335,48 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 })
 
-.controller('RegisterBizCtrl', function($scope, $state,$ionicHistory, ToastService){
-  $scope.data = {};
+.controller('RegisterBizCtrl', function($scope, $state,$ionicHistory, ToastService,CategoriesService, UserService,BusinessesService,$ionicLoading){
 
+  $scope.data = {};
+  $scope.categories = {};
   $scope.userTypeList = [
   { text: "Business Owner", value: "owner" },
   { text: "Service Provider", value: "sprovider" }
 ];
 
-  $scope.registerBiz = function(){
-    var id = UserService.getUserId;
-    BusinessService.registerBiz(id, $scope.data.usertype,$scope.data.name,$scope.data.street,$scope.data.email,$scope.data.phone,$scope.data.fax,$scope.data.website,$scope.data.facebook,$scope.data.services);
+  function getCategories() {
 
-    $ionicHistory.nextViewOptions({
-      disableBack:true
+    var items = [];
+    var category = {};
+    CategoriesService.getAllCategories().then(function(results) {
+      $ionicLoading.hide();
+      $scope.categories = results.map(function(c) {
+        return {
+          "name": c.get("name"),
+          "id": c.id,
+          "frequency": c.get("frequency")
+        }
+      });
+    }, function(err){
+      $ionicLoading.hide();
+      ToastService.showToast("Something went wrong while retrieving data ,, please check your connection.");
     });
+  }
 
-    $state.go('app.categories');
+  getCategories();
+
+
+  $scope.registerBiz = function(){
+    var owner_id = UserService.getUserId();
+
+
+    BusinessesService.registerBiz(owner_id, $scope.data.usertype,$scope.data.category.id,$scope.data.name,$scope.data.street,$scope.data.address1, $scope.data.city, $scope.data.email,$scope.data.phone,$scope.data.mphone,$scope.data.fax,$scope.data.website,$scope.data.facebook,$scope.data.services);
+      $ionicHistory.nextViewOptions({
+        disableBack:true
+      });
+    /*  ToastService.showToast("Your business has been successfully registered, with TriniBiz. The next time you log in your profile will be updated.");*/
+      $state.go('app.categories');
+
   }
 
 })
@@ -373,7 +401,8 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
     }
 
     $scope.isAuthenticated = function(){
-      return UserService.hasRole(USER_ROLES.user);
+      return UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
+      UserService.hasRole(USER_ROLES.owner);
     }
   })
 
