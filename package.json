@@ -20,7 +20,8 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "org.apache.cordova.file-transfer"
+    "org.apache.cordova.file-transfer",
+    "ionic-plugin-deploy"
   ],
   "cordovaPlatforms": [
     "android"

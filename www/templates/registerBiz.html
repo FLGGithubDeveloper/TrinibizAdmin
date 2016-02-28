@@ -46,7 +46,7 @@
 
                 <label class="item item-input" ng-class="{ 'has-errors' : registerBizForm.phone.$invalid, 'no-errors' : registerBizForm.phone.$valid}">
 
-                <input type="phone" name="phone" placeholder="Enter Biz phone" ng-model="data.phone" required/>
+                <input type="tel" name="phone" placeholder="Enter Biz phone" ng-model="data.phone" required/>
                 </label>
                 <div class="error-container" ng-messages="registerBizForm.phone.$error" ng-messages-include="templates/app_messages.html"></div>
 

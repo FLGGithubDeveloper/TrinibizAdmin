@@ -1,80 +1,5 @@
 angular.module('trinibiz.services', [])
 
-.factory('SharedDataService', function() {
-  var savedData = {}
-  function set(data) {
-    savedData = data;
-  }
-  function get() {
-    return savedData;
-  }
-  return {
-    set: set,
-    get: get
-  }
-
-})
-
-.factory('AuthResolver', function ($q, $rootScope, $state) {
-  return {
-    resolve: function () {
-      var deferred = $q.defer();
-      var unwatch = $rootScope.$watch('currentUser', function (currentUser) {
-        if (angular.isDefined(currentUser)) {
-          if (currentUser) {
-            deferred.resolve(currentUser);
-          } else {
-            deferred.reject();
-            $state.go('user-login');
-          }
-          unwatch();
-        }
-      });
-      return deferred.promise;
-    }
-  };
-})
-
-.factory('AuthService', function ($http, Session) {
-  var authService = {};
-  authService.login = function (credentials) {
-    Parse.User.logIn(credentials.username,credentials.password,{
-        success: function(user){
-            Session.create(res.data.id, user.id,user.role);
-        return user;
-        },
-        error: function(user,error){
-            //login failed
-        }
-    })
-  };
-  authService.isAuthenticated = function () {
-    return !!Session.userId;
-  };
-  authService.isAuthorized = function (authorizedRoles) {
-    if (!angular.isArray(authorizedRoles)) {
-      authorizedRoles = [authorizedRoles];
-    }
-    return (authService.isAuthenticated() &&
-      authorizedRoles.indexOf(Session.userRole) !== -1);
-  };
-  return authService;
-})
-
-.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
-    return {
-      responseError: function (response) {
-        $rootScope.$broadcast({
-          401: AUTH_EVENTS.notAuthenticated,
-          403: AUTH_EVENTS.notAuthorized,
-          419: AUTH_EVENTS.sessionTimeout,
-          440: AUTH_EVENTS.sessionTimeout
-        }[response.status], response);
-        return $q.reject(response);
-      }
-    };
-})
-
 .factory('AppActions', function() {
     return {
       like: "like",
@@ -159,7 +84,7 @@ angular.module('trinibiz.services', [])
     var setUser = function(user) {
       unsetUser();
       $rootScope.sessionUser.user = user.attributes;
-      $rootScope.sessionUser.user.type = $rootScope.sessionUser.user.type || "service seeker";
+    //  $rootScope.sessionUser.user.type = $rootScope.sessionUser.user.type || "service seeker";
       $rootScope.sessionUser.userId = user.id;
     }
     var unsetUser = function(){
@@ -389,6 +314,8 @@ angular.module('trinibiz.services', [])
 .service('BusinessesService', ['ParseFactory', 'UserService','$ionicLoading','USER_ROLES',function(ParseFactory, UserService,$ionicLoading,USER_ROLES) {
     var registerBiz = function(owner_id,usertype,category_id,name,street,address1,city,email,phone,mphone,fax,website,facebook,services){
 
+      var user = ParseFactory.User.current();
+
       var owner = {
         "__type": "Pointer",
         "className": "_User",
@@ -400,6 +327,16 @@ angular.module('trinibiz.services', [])
         "className": "BusinessCategory",
         "objectId": category_id
       };
+
+        var contact = {};
+        var contactPersons = [];
+        contact["email"] = email;
+        contact["phone"] = phone;
+        contact["type"] = usertype;
+        contact["firstName"] = user.get("firstName");
+        contact["lastName"] = user.get("lastName");
+        contactPersons.push(contact);
+
         var Business = ParseFactory.Object.extend("Business");
         var biz = new Business();
 
@@ -416,12 +353,13 @@ angular.module('trinibiz.services', [])
         biz.set("fax", fax);
         biz.set("website", website);
         biz.set("facebook", facebook);
-        biz.set("services", services);
+        biz.set("Services", services);
+        biz.set("contactPersons", contactPersons);
 
         biz.save(null, {
         success: function(biz,owner) {
           // Execute any logic that should take place after the object is saved.
-          var user = ParseFactory.User.current();
+
           user.set("type",usertype);
             user.save(null,{
               success:function(user){

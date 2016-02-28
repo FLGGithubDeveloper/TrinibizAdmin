@@ -21,7 +21,7 @@
           <div  ng-repeat="contact in business.contactPersons">
           <div class="item item-icon-left"><i class="icon ion-person royal"></i> {{contact.firstName}} {{contact.lastName}} ({{contact.type}})</div>
           <div class="item item-icon-left"><i class="icon ion-email calm"></i>  {{contact.email}}</div>
-          <div><a class="item item-icon-left" ng-href="tel: {{contact.phone}}"> <i class="icon ion-ios-telephone-outline"></i>Click-to-Call {{contact.phone}}</a></div>
+          <div><a class="item item-icon-left" ng-href="tel: {{contact.phone}}"> <i class="icon ion-ios-telephone-outline"></i>Click-to-Call {{contact.phone | tel}}</a></div>
 
         </div>
       <!--/ion-item-->
@@ -80,7 +80,7 @@
           <ion-item class="subdued">{{business.likes.length}} people like this</ion-item>
             <ion-list>
               <ion-item class="item item-body" ng-repeat="review in business.reviews">
-                <p>{{review.datetime  | date:'short'}}</p>
+                <p>{{review.datetime | date:'short'}}</p>
                 <p><rating ng-model="review.rating" ></rating></p>
                 <p>{{review.comment}}</p>
                 <p></p>

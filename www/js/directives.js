@@ -40,6 +40,13 @@ directive('noResults', function () {
         //controllerAs: 'noResultsCtrl'
 }).
 
+directive('termsContent', function () {
+    return {
+        restrict: 'E',
+        templateUrl: 'templates/terms-content.html'
+      };
+}).
+
 directive('noBusinesses', function () {
     return {
         restrict: 'E',

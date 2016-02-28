@@ -1,14 +1,11 @@
-﻿<!--div class="messages">
-    <div ng-message="required">Required</div>
-    <div ng-message="minlength">Too short</div>
-    <div ng-message="maxlength">Too long</div>
-    <div ng-message="email">Invalid email address</div>
-    <div ng-message="compareTo">Must match the previous entry</div>
-</div-->
-<!--script id="app_messages.html" type="text/ng-template"-->
+﻿<!--script id="app_messages.html" type="text/ng-template"-->
     <div class="error" ng-message="required">
       <i class="ion-information-circled"></i>
       This field is required!
+    </div>
+    <div class="error" ng-message="tel">
+      <i class="ion-information-circled"></i>
+      Invalid telephone number format (format required (868) 222-1111)
     </div>
     <div class="error" ng-message="minlength">
       <i class="ion-information-circled"></i>
