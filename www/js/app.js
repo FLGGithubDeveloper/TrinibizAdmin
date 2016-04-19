@@ -2,14 +2,14 @@
 // Ionic trinibiz App
 
 angular.module('trinibiz', [
-  'ionic',
-  'ionic.service.core',
+  'ionic', 'ionic.service.core',
   'ionic-toast',
   'ionic.rating',
   'trinibiz.controllers',
   'trinibiz.directives',
   'trinibiz.services',
   'trinibiz.routes',
+  'trinibiz.filters',
   'jett.ionic.filter.bar',
   'ngCordova',
   'ngMessages',
@@ -90,7 +90,7 @@ angular.module('trinibiz', [
 
 .run(['$ionicPlatform','$rootScope','USER_ROLES', 'GUEST_USER','AclService','RolesPermissions','UserService' , (function($ionicPlatform,$rootScope,USER_ROLES, GUEST_USER,AclService,RolesPermissions,UserService) {
 
-Parse.initialize();
+Parse.initialize('QjbA9I9QfG8ezwEpWjGgyh4xxGJGMQzzo0HISCtZ','vELvekFTQGbDksDZWaoDudqPnZYc7ILyPFhNVmmA');
 
 AclService.setAbilities(RolesPermissions);
 

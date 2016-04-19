@@ -2,11 +2,15 @@
   "name": "HelloIonic",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.2.1",
-    "ionic-platform-web-client": "^0.2.1"
+    "ionic": "driftyco/ionic-bower#1.2.4",
+    "ionic-platform-web-client": "^0.2.1",
+    "platform.js": "platform#^1.3.1"
   },
   "dependencies": {
     "ngCordova": "~0.1.20-alpha",
     "ionic-toast": "~0.2.0"
+  },
+  "resolutions": {
+    "ionic-platform-web-client": "^0.7.1"
   }
 }

@@ -29,7 +29,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
  };
 });*/
 
-.controller('AppController', function($scope, $ionicFilterBar, $timeout, CategoriesService,ToastService, $ionicLoading, $state) {
+.controller('AppController', function($scope, $ionicFilterBar, $ionicScrollDelegate, $timeout, CategoriesService,ToastService, $ionicLoading, $state) {
 
   $scope.filterBarInstance = "";
   $scope.filterBarStatus = "clean";
@@ -47,7 +47,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
         return {
           "name": c.get("name"),
           "id": c.id,
-          "frequency": c.get("frequency")
+        //  "frequency": c.get("frequency")
         }
       });
     }, function(err){
@@ -60,6 +60,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   getCategories();
 
   $scope.showFilterBar = function() {
+    $ionicScrollDelegate.scrollTop();
     scope.filterBarInstance = $ionicFilterBar.show({
       items: $scope.categories,
       update: function(filteredItems, filteredText) {
@@ -78,7 +79,84 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 })
 
-.controller('BusinessListCtrl', function($scope, $state, $stateParams, $ionicFilterBar, USER_ROLES, GUEST_USER, UserService, AppActions, AppViews, BusinessesService, $ionicLoading,ToastService) {
+.controller('BusinessesCtrl', function($scope, $ionicFilterBar, $ionicScrollDelegate, $timeout, BusinessesService,ToastService, $ionicLoading, $state, $stateParams) {
+
+  $scope.filterBarInstance = "";
+  $scope.filterBarStatus = "clean";
+  var scope = this;
+  $scope.businesses = {};
+    $scope.title = "All Businesses"
+
+  if ($stateParams.categoryName !== undefined) {
+    $scope.title = $stateParams.categoryName;
+  }
+
+  if ($stateParams.ownerBusinesses !== undefined) {
+    $scope.title = "My Businesses";
+  }
+
+  var isSProvider = function(){
+  //  console.log(business.type);
+    return $scope.business.type == "service provider";//return BusinessesService.isSProvider(business);
+  }
+
+  var isBusiness = function(){
+    //console.log(business.type);
+    return $scope.business.type == "owner";//return BusinessesService.isBusiness(business);
+  }
+
+  $scope.isBlank = function(attribute){
+    if (attribute == "none" || attribute == "" || attribute === undefined)
+      return true;
+    return false;
+  }
+
+  var noBusinesses = function()
+  {
+    if($scope.businesses.length() == 0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  function getBusinesses() {
+
+    var items = [];
+    var business = {};
+    BusinessesService.getBusinesses($stateParams.categoryId, $stateParams.ownerBusinesses).then(function(results) {
+      $ionicLoading.hide();
+      $scope.businesses = results;
+    }, function(err){
+      $ionicLoading.hide();
+      ToastService.showToast("Something went wrong while retrieving businesses, please check your connection.");
+    });
+  }
+
+  $ionicLoading.show();
+  getBusinesses();
+
+    $scope.showFilterBar = function() {
+      $ionicScrollDelegate.scrollTop();
+      scope.filterBarInstance = $ionicFilterBar.show({
+      items: $scope.businesses,
+      update: function(filteredItems, filteredText) {
+        if(filteredItems.length == 0 && filteredText !== 'undefined'){
+         $state.go('app.noresults');
+          //$location.path("templates/no-results.html")
+        }
+        else{
+            $scope.businesses = filteredItems;
+            $scope.filterBarStatus = "dirty";
+        }
+      },
+      filterProperties: ['name']
+    });
+  }
+
+})
+
+.controller('BusinessDetailsCtrl', function($scope, $state, $stateParams, $ionicFilterBar, USER_ROLES, GUEST_USER, UserService, AppActions, AppViews, BusinessesService, $ionicLoading,ToastService, $cordovaEmailComposer) {
 
   $scope.can = UserService.can;
   $scope.appActions = AppActions;
@@ -89,25 +167,23 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.review.rating = 3;
   $scope.review.max = 5;
   $scope.readOnly = true;
-
-  //$scope.review = {};
   $scope.businesses = {};
-  $scope.filterBarInstance = "";
-  $scope.filterBarStatus = "clean";
-  var scope = this;
-  $scope.title = "All Businesses"
 
-  if ($stateParams.categoryName !== undefined) {
-    $scope.title = $stateParams.categoryName;
+
+  if ($stateParams.businessName !== undefined) {
+    $scope.title = $stateParams.businessName;
   }
 
-  if ($stateParams.ownerBusinesses !== undefined) {
-    $scope.title = "My Businesses";
-  }
+  $scope.openInAppBrowser = function(website)
+  {
+      // Open in external browser
+      //window.open(website,'_system','location=yes');
+      window.open(website,'_blank');
+  };
 
 
-  function getBusinesses() {
-    return BusinessesService.getBusinesses($stateParams.categoryId,$stateParams.ownerBusinesses).then(function(results) {
+  function getBusinessDetails() {
+    return BusinessesService.getBusinessDetails($stateParams.businessId).then(function(results) {
       $scope.businesses = results; //the scope goverened by BusinessCtrl has all the businesses downloaded
       $ionicLoading.hide();
     }, function(err){
@@ -117,68 +193,31 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
   }
 
-
   $ionicLoading.show();
-  getBusinesses();
-  //getSProviders();
-
-  $scope.getDatetime = new Date();
-
-  $scope.showPopup = function(business){
-    var myPopup = $ionicPopup.show({
-       templateUrl: 'templates/review-popup.html',
-       title: 'Enter Review',
-       scope: $scope,
-       business: business,
-       buttons: [
-         { text: 'Cancel' },
-         {
-           text: '<b>Submit</b>',
-           type: 'button-positive',
-           onTap: function(business) {
-             $scope.submitReview(business)
-           }
-         },
-       ]
-     });
-  }
+  getBusinessDetails();
 
   $scope.refresh = function(){
-    if (scope.filterBarInstance) {
-      scope.filterBarInstance();
-      scope.filterBarInstance = null;
-    }
 
     var refreshComplete = function(){
       $scope.$broadcast('scroll.refreshComplete');
     }
-    if($stateParams.ownerBusinesses){
-      getBusinesses().then(refreshComplete,refreshComplete);
-    }
+
   };
+
+  $scope.isBlank = function(attribute){
+    if (attribute == "none" || attribute == "" || attribute === undefined){
+      return true;
+    }
+    else{
+        return false;
+    }
+  }
 
   $scope.isOwnerPage = function(){
     if($stateParams.ownerBusinesses) {
       return true;
     }
     return false;
-  };
-
-  $scope.showFilterBar = function() {
-    scope.filterBarInstance = $ionicFilterBar.show({
-      items: $scope.businesses,
-      update: function(filteredItems, filteredText) {
-        if(filteredText !== 'undefined' && filteredItems.length == 0){
-         $state.go('app.noresults');
-          //$location.path("templates/no-results.html")
-        }else{
-          $scope.businesses = filteredItems;
-          $scope.filterBarStatus = "dirty";
-        }
-
-      },
-      filterProperties: ['name']
-    });
   };
 
   $scope.isGuest = function() {
@@ -210,8 +249,61 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 		});
   };
 
+  $scope.email = function(){
+    email = {
 
+  	to: 'futurelineglobal@gmail.com',
+  	subject: 'A test email',
+  	body: 'Does this work?'
+  }
 
+  if (window.cordova && window.cordova.plugins) {
+        $cordovaEmailComposer.isAvailable().then(function () {
+             $cordovaEmailComposer.open(email).then(null, function () {
+
+             });
+        	}, function () {
+         alert('email is no go')
+         });
+   } else alert('no cordova')
+
+ };
+
+  $scope.xmail = function() {
+    document.addEventListener("deviceready", function () {          $cordovaEmailComposer.isAvailable().then(function() {
+      alert("email available");
+    }, function () {
+      alert = ("email not available");
+    });
+    var email = {
+      to: 'futurelineglobal@gmail.com',
+      cc: 'flanders.tremayne@gmail.com',
+      subject: 'Cordova Icons',
+      body: 'How are you? Nice greetings from Leipzig',
+      isHtml: true
+    };
+    $cordovaEmailComposer.open(email).then(null, function () {
+      alert("email not sent");
+    });
+  }, false);
+}
+
+  $scope.sendEmail = function(email){
+   if(window.plugins && window.plugins.emailComposer){
+      window.plugins.emailComposer.showEmailComposerWithCallback(function(result){
+          ToastService.showToast("Email launched");
+      },
+            null, // Subject
+            null,                      // Body
+            [email],    // To
+            null,                    // CC
+            null,                    // BCC
+            false,                   // isHTML
+            null,                    // Attachments
+            null);                  // Attachment Data
+      //  ToastService.showToast("Email launched");
+    }
+  }
 })
 
 .controller('ContactsCtrl', function($scope, $ionicFilterBar, $timeout, ContactsService,ToastService, $ionicLoading, $stateParams) {
@@ -228,14 +320,6 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
     ContactsService.getContacts($stateParams.businessId).then(function(results) {
       $ionicLoading.hide();
       $scope.contacts = results;
-      /*$scope.contacts = result.map(function(c) {
-        return {
-          "firstName": c.get("firstName"),
-          "lastName": c.get("lastName"),
-          "email": c.get("email"),
-          "phone": c.get("phone")
-        }
-      });*/
     }, function(err){
       $ionicLoading.hide();
       ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
@@ -270,7 +354,6 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.appViews = AppViews;
   $scope.appActions = AppActions;
   $scope.user = UserService.getUser;
-  //$scope.profileImageUrl = "assets/\//img/\//categories/\//guestUser.jpg";
 
   var deploy = new Ionic.Deploy();
 
@@ -295,7 +378,6 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
       console.error('Ionic Deploy: Unable to check for updates', err);
     });
   }
-
 
 
   $scope.logOut = function() {
@@ -330,32 +412,6 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
   $scope.isSupplier = function(){
     return UserService.isSProvider() || UserService.isOwner();
-  }
-
-  // Triggered on a button click, or some other target
-  $scope.showPicLoad = function() {
-
-    // Show the action sheet
-    var hideSheet =  $ionicActionSheet.show({
-      /*titleText: 'Update Profile Pic',
-      buttons: [
-        { text: '<i class="icon ion-upload"></i>Upload Profile Pic' }
-      ],
-
-      cancelText: 'Cancel',
-      cancel: function() {
-           // add cancel code..
-         },
-      buttonClicked: function(index) {
-        return true;
-      }*/
-    });
-
-    // For example's sake, hide the sheet after two seconds
-    $timeout(function() {
-      hideSheet();
-    }, 4000);
-
   };
 
 })
@@ -394,7 +450,6 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.registerBiz = function(){
     var owner_id = UserService.getUserId();
 
-
     BusinessesService.registerBiz(owner_id, $scope.data.usertype,$scope.data.category.id,$scope.data.name,$scope.data.street,$scope.data.address1, $scope.data.city, $scope.data.email,$scope.data.phone,$scope.data.mphone,$scope.data.fax,$scope.data.website,$scope.data.facebook,$scope.data.services);
       $ionicHistory.nextViewOptions({
         disableBack:true
@@ -411,7 +466,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 
     $scope.signupEmail = function() {
-      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username,$scope.data.usertype)
+      UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username)
         .then(function(user) {
         /*  ToastService.showToast('Please check your email to verify your account');*/
             $state.go('app.login');
@@ -441,18 +496,34 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
         $ionicHistory.nextViewOptions({
           disableBack: true
         });
-        if(UserService.isOwner() || UserService.isSProvider()){
+      /*  if(UserService.emailVerified() == undefined){
+          UserService.logOut();
+          $ionicHistory.nextViewOptions({
+            disableBack:true
+          });
+          $state.go('app.login');
+        //  $location.path("/app/");
+
+          var message = 'You received a confirmation email when you signed up for TriniBiz, but you have not confirmed your email. Please do verify your email, by visiting the confirmation email and clicking on the Confirm Email link';
+          $ionicPlatform.ready(function(){
+              //ToastService.showToast(message);
+              alert(message);
+          })
+
+        }*///else{
           $state.go('app.categories');
-        }
-        else{
-          $state.go('app.registerBiz');
-        }
+          /*if(UserService.isOwner() || UserService.isSProvider()){
+            $state.go('app.categories');
+          }
+          else{
+            $state.go('app.registerBiz');
+          }*/
 
-        var message = 'Welcome to TriniBiz, '+$scope.data.username+'.';
-        $ionicPlatform.ready(function(){
-            ToastService.showToast(message);
-        })
-
+          var message = 'Welcome to TriniBiz, '+$scope.data.username+'.';
+          $ionicPlatform.ready(function(){
+              ToastService.showToast(message);
+          })
+        //}
       },
       function(user, error) {
       // The login failed. Check error to see why.

@@ -7,6 +7,10 @@ body {
   cursor: url("http://ionicframework.com/img/finger.png"), auto;
 }
 
+.businesslist{
+  border-top-color: blue;
+}
+
 .dark {
   background-color: #3f4041 !important;
   color: #ffffff;
@@ -149,11 +153,7 @@ input.ng-valid {
     outline-color: green;
 }*/
 
-.profile-pic {
-    width : 30px;
-    height : 30px;
-    border-radius: 50% 50%;
-}
+
 
 .category-pic {
     position: relative;
@@ -166,6 +166,8 @@ input.ng-valid {
     width : 40px;
     height : 40px;
 }
+
+
 
 .item-icon-left ion-spinner {
   float: left;
@@ -194,40 +196,7 @@ ul.rating li i {
 .review_input h3 {
   white-space: normal !important;
 }
-/*
-.star-ratings-css {
-  unicode-bidi: bidi-override;
-  color: #c5c5c5;
-  font-size: 25px;
-  height: 25px;
-  width: 100px;
-  margin: 0 auto;
-  position: relative;
-  padding: 0;
-  text-shadow: 0px 1px 0 #a2a2a2;
-}
 
-.star-ratings-css-top {
-  color: #e7711b;
-  padding: 0;
-  text-shadow: 0px 1px 0 #ab5414;
-  position: absolute;
-  z-index: 1;
-  display:block;
-  left: 0px;
-  overflow: hidden;
-}
-.star-ratings-css-bottom { z-index: 0; }
-
-
-  .rating {
-    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png") repeat-x;
-    background-position: 0 100%;
-    float: left;
-    height: 21px;
-    display:block;
-  }
-*/
 /*Error Handling for form views*/
 
 .error-container {
@@ -264,3 +233,50 @@ ul.rating li i {
 .no-errors {
   border-bottom: 3px solid green;
 }
+
+#profile-circle {
+    width : 60px;
+    height : 60px;
+    line-height:60px;
+    background:#007f00;
+    font-size:20px;
+    margin-top: -0.2em;
+}
+
+#review-profile-circle {
+    width : 20px;
+    height : 20px;
+    line-height:20px;
+    background:#007f00;
+    font-size:10px;
+    margin-top: 0.1em;
+}
+
+#business_circle
+{
+  width:30px;
+  height:30px;
+  line-height:30px;
+  background:#551a8b;
+}
+
+#sprovider_circle
+{
+    width:30px;
+    height:30px;
+    line-height:30px;
+    background:#387ef5;
+}
+
+.circle
+    {
+
+    border-radius:50% 50%;
+
+    color:#fff;
+    text-align:center;
+    float: left;
+    margin-right: 1em;
+
+    margin-bottom: 1em;
+    }

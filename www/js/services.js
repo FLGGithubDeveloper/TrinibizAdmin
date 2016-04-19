@@ -8,7 +8,7 @@ angular.module('trinibiz.services', [])
       email: "email",
       login: "login",
       signup: "signup",
-      registerBiz: "registerBiz",
+    //  registerBiz: "registerBiz",
       logout: "logout",
       view_profile: "view_profile",
       view_settings: "view_settings",
@@ -20,7 +20,8 @@ angular.module('trinibiz.services', [])
 .factory('AppViews', function() {
     return {
       menu: "menu",
-      businesses: "businesses",
+      business: "business",
+      nobusinesses: "nobusinesses",
       profile: "profile",
       categories: "categories",
       signup: "signup",
@@ -29,22 +30,23 @@ angular.module('trinibiz.services', [])
       noresults: "noresults",
       terms: "terms",
       invite:"invite",
-      registerBiz: "registerBiz"
+    //  registerBiz: "registerBiz",
+      businessNames: "businessNames"
     }
 })
 
 .factory('RolesPermissions', ['USER_ROLES', 'AppViews', 'AppActions', function(USER_ROLES, AppViews, AppActions) {
     var abilities = {}
-    abilities[USER_ROLES.user] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite, AppViews.registerBiz,
-      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite, AppActions.registerBiz
+    abilities[USER_ROLES.user] = [AppViews.noresults,AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppViews.terms,AppViews.invite, /*AppViews.registerBiz,*/ AppActions.like,
+      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite, /*AppActions.registerBiz*/
     ];
-    abilities[USER_ROLES.owner] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
+    abilities[USER_ROLES.owner] = [AppViews.noresults, AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
       AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
     ];
-    abilities[USER_ROLES.sprovider] = [AppViews.noresults, AppViews.menu, AppViews.businesses, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
+    abilities[USER_ROLES.sprovider] = [AppViews.noresults, AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
       AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
     ];
-    abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.menu, AppViews.businesses, AppViews.categories, AppViews.signup, AppViews.login, AppViews.settings, AppViews.terms, AppViews.invite,
+    abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.nobusinesses,AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.categories, AppViews.signup, AppViews.login, AppViews.settings, AppViews.terms, AppViews.invite,
       AppActions.signup, AppActions.login, AppActions.call, AppActions.email, AppActions.view_terms, AppActions.view_invite
     ];
     return abilities;
@@ -76,6 +78,12 @@ angular.module('trinibiz.services', [])
     }
     var getUserId = function(){
       return  $rootScope.sessionUser.userId;
+    }
+
+    var emailVerified = function(){
+      var user = ParseFactory.User.current();
+      return user.get("emailVerified");
+
     }
     var getUserRole = function(){
       return $rootScope.sessionUser.role;
@@ -157,7 +165,7 @@ angular.module('trinibiz.services', [])
 
     }
 
-    var register = function(firstname, lastname,username, password, email, usertype) {
+    var register = function(firstname, lastname,username, password, email) {
 
       var user = new ParseFactory.User();
       user.set("firstName", firstname);
@@ -165,12 +173,12 @@ angular.module('trinibiz.services', [])
       user.set("username", username);
       user.set("password", password);
       user.set("email", email);
-      user.set("type", usertype);
+      user.set("type", "regular");
 
         return user.signUp(null,{
         success: function(user) {
       // Hooray! Let them use the app now.
-        ToastService.showToast("Success!, Please check your email to verify your account");
+        ToastService.showToast("Success!, you can now like and review businesses.");
       },
         error: function(user, error) {
         // Show the error message somewhere and let the user try again.
@@ -261,6 +269,7 @@ angular.module('trinibiz.services', [])
       hasRole: hasRole,
       getUser: getUser,
       getUserId: getUserId,
+      emailVerified: emailVerified,
       setUser: setUser,
       unsetUser: unsetUser,
       isLoggedIn: isLoggedIn,
@@ -291,6 +300,7 @@ angular.module('trinibiz.services', [])
     }
 }])
 
+
 .service('ContactsService', ['ParseFactory', function(ParseFactory) {
 
     var getContacts = function(businessId) {
@@ -312,6 +322,8 @@ angular.module('trinibiz.services', [])
   }])
 
 .service('BusinessesService', ['ParseFactory', 'UserService','$ionicLoading','USER_ROLES',function(ParseFactory, UserService,$ionicLoading,USER_ROLES) {
+
+
     var registerBiz = function(owner_id,usertype,category_id,name,street,address1,city,email,phone,mphone,fax,website,facebook,services){
 
       var user = ParseFactory.User.current();
@@ -355,15 +367,16 @@ angular.module('trinibiz.services', [])
         biz.set("facebook", facebook);
         biz.set("Services", services);
         biz.set("contactPersons", contactPersons);
+        //biz.set("verified","false")
 
         biz.save(null, {
         success: function(biz,owner) {
           // Execute any logic that should take place after the object is saved.
 
-          user.set("type",usertype);
+        //  user.set("type",usertype);
             user.save(null,{
               success:function(user){
-                alert('Congratulations! You are now officially a TriniBizzer! The next time you log in your profile will be updated.');
+                alert('Congratulations! You will be contacted in 3 business days via the email you listed in the registration.');
               },
               error: function(user,error){
                 alert('Failed to register new Biz ' +              error.message);
@@ -378,6 +391,7 @@ angular.module('trinibiz.services', [])
       });
 
     }
+
     var mapBusinesses = function(rawBusinesses){//function to process the businesses for use in the app
       var items = [];
       var business = {};
@@ -388,6 +402,7 @@ angular.module('trinibiz.services', [])
         business.name = rawBusinesses[i].get("name");
         business.id = rawBusinesses[i].id;
         business.phone = rawBusinesses[i].get("phone");
+        business.mphone = rawBusinesses[i].get("mphone");
         business.website = rawBusinesses[i].get("website");
         business.street = rawBusinesses[i].get("street");
         business.city = rawBusinesses[i].get("city");
@@ -423,10 +438,62 @@ angular.module('trinibiz.services', [])
       }
       return items;
     }
-    var getBusinesses = function(categoryId,ownerBusinesses) {//function to get businesses through either query to backend database or localStorage
+
+    var mapBusinessesSummary = function(rawBusinesses){//function to process the businesses for use in the app
+      var items = [];
+      var business = {};
+      var contactPersons = [];
+
+      for (var i = 0; i < rawBusinesses.length; i++) {
+        business.name = rawBusinesses[i].get("name");
+        business.id = rawBusinesses[i].id;
+        business.phone = rawBusinesses[i].get("phone");
+        business.mphone = rawBusinesses[i].get("mphone");
+        contactPersons = rawBusinesses[i].get("contactPersons");
+        business.contactPersons = contactPersons ? contactPersons : [];
+
+        items.push(business);
+        business = {}; //clear business object for next iteration
+      }
+      return items;
+    }
+
+    var getBusinesses = function(categoryId, ownerBusinesses) {
       var Business = ParseFactory.Object.extend("Business");
       var query = new ParseFactory.Query(Business);
+
       if (categoryId !== undefined && categoryId !== "") {
+
+        var category = {
+          "__type": "Pointer",
+          "className": "BusinessCategory",
+          "objectId": categoryId
+        };
+        query.equalTo("category", category);
+    }else if (Boolean(ownerBusinesses) == true) {
+      //parameter that tells the service that its a query for the business owners business
+      var userId = UserService.getUserId();
+      var owner = {
+        "__type": "Pointer",
+        "className": "_User",
+        "objectId": userId
+      };
+      query.equalTo("owner", owner);
+    }
+    query.select("contactPersons", "name");
+
+
+    //category id not defined so its either all businesses or business details
+    return query.find().then(function(results){
+      var mappedBusinesses = mapBusinessesSummary(results);
+      return mappedBusinesses;
+    });
+  }
+
+    var getBusinessDetails = function(businessId) {//function to get businesses through either query to backend database or localStorage
+      var Business = ParseFactory.Object.extend("Business");
+      var query = new ParseFactory.Query(Business);
+      if (businessId !== undefined && businessId !== "") {
         // if($sessionStorage["categoryBusinesses"][categoryId]){
         //   //if localStorage with businesses in a specific category
         //   //is set already set
@@ -435,21 +502,12 @@ angular.module('trinibiz.services', [])
         //     //return localStorage businesses.
         //   });
         // }
-        var category = {
+      /*  var category = {
           "__type": "Pointer",
           "className": "BusinessCategory",
           "objectId": categoryId
-        };
-        query.equalTo("category", category);
-      }else if (Boolean(ownerBusinesses) == true) {
-        //parameter that tells the service that its a query for the business owners business
-        var userId = UserService.getUserId();
-        var owner = {
-          "__type": "Pointer",
-          "className": "_User",
-          "objectId": userId
-        };
-        query.equalTo("owner", owner);
+        };*/
+        query.equalTo("objectId", businessId);
       }
         // }else {
         //   if($sessionStorage["allBusinesses"].length > 0){//if localStorage has all the businesses already stored
@@ -506,6 +564,15 @@ angular.module('trinibiz.services', [])
         });
       }
     }
+
+    var isSProvider = function(business){
+      return business.contactPersons.type == "service provider";//business.owner == null;
+    }
+
+    var isBusiness = function(business){
+      return business.contactPersons.type == "owner";//business.owner != null;
+    }
+
     var submitReview = function(business,review,callback) {
       review.author = UserService.getUser().username;
       var datetime = new Date();
@@ -533,8 +600,11 @@ angular.module('trinibiz.services', [])
     }
     return {
       getBusinesses: getBusinesses,
+      getBusinessDetails: getBusinessDetails,
       registerBiz:  registerBiz,
       likeUnlike: likeUnlike,
+      isSProvider: isSProvider,
+      isBusiness: isBusiness,
       submitReview: submitReview
     }
   }])

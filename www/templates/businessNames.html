@@ -1,0 +1,31 @@
+<ion-view view-title="{{title}}" name="businessNames">
+
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon icon ion-ios-search-strong" ng-click="showFilterBar()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="padding">
+    <div class="list">
+      <button style= "border-top-color: #444; border-bottom-color: #ef473a;" class="button button-full button-dark" ng-repeat="business in businesses | orderBy: 'name'" ui-sref="app.business({businessId: business.id, businessName: business.name})" ng-bind="business.name">
+
+        <!--div class="row" ng-hide="noBusinesses()"-->
+          <!--div id="business_circle" class="circle" ng-show="isBusiness()">B</div>
+          <div id="sprovider_circle" class="circle" ng-show="isSProvider()">SP</div-->
+
+          <!--div class="col col-70"-->
+            <!--button class="button button-dark item-text-wrap" ng-bind="business.name" ui-sref="app.business({businessId: business.id, businessName: business.name})"></button>
+          </div>
+          <div class="col-5" ng-hide="isBlank(business.phone)"><a ng-href="tel: {{business.phone}}"><i class="icon ion-ios-telephone-outline"></i></a></div!-->
+
+        <!--/div-->
+      </button>
+      <div ng-show="filterBarStatus=='clean' && businesses.length == 0" ng-cloak>
+     <no-businesses></no-businesses>
+   </div>
+
+ </div>
+    <!--div ng-show="noBusinesses()"><no-businesses info=""></no-businesses></div-->
+  </ion-content>
+</ion-view>

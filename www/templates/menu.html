@@ -22,7 +22,11 @@
     <ion-content class="dark">
       <ion-list>
           <ion-item class ="item item-thumbnail-left" ng-show ="isAuthenticated()">
-              <img class="profile-pic" src="assets\img\categories\guestUser.jpg" ng-src="{{user().profilePic.url()}}" ng-clicked="showPicLoad()">
+
+
+
+              <div id="profile-circle" class="circle">{{user().firstName | limitTo: 1}}{{user().lastName | limitTo: 1}}</div>
+              <!--img class="profile-pic" src="assets\img\categories\guestUser.jpg" ng-src="{{user().profilePic.url()}}" ng-clicked="showPicLoad()"-->
 
               <div style="padding-left:100px;">
                 <a class="item-dark" menu-close ui-sref="app.profile" ng-show="can(appViews.profile)">
@@ -42,7 +46,7 @@
           </ion-item>
 
           <ion-item class="item item-thumbnail-left" ng-show="isGuest()">
-              <img class="profile-pic" ng-src="assets\img\categories\guestUser.jpg">
+              <img id="profile-circle" class="circle" ng-src="assets\img\categories\guestUser.jpg">
               <span style="padding-left:100px;">Guest User</span>
               <b class="caret"></b>
           </ion-item>
@@ -51,9 +55,13 @@
           Categories
         </ion-item>
 
-        <ion-item class="item-dark" menu-close ui-sref="app.allbusinesses" ng-show="can(appViews.businesses)">
+        <ion-item class="item-dark" menu-close ui-sref="app.businessNames" ng-show="can(appViews.businessNames)">
           Businesses
         </ion-item>
+
+        <!--ion-item class="item-dark" menu-close ui-sref="app.allbusinesses" ng-show="can(appViews.businesses)">
+          Businesses
+        </ion-item-->
 
           <ion-item class="item-dark" menu-close ui-sref="app.login" ng-show="can(appViews.login)">
           <i class="icon ion-log-in"> Login</i>

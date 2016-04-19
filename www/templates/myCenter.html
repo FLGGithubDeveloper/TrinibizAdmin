@@ -4,10 +4,13 @@
             <!--ion-item class="item-thumbnail-left">
                 <img src="http://graph.facebook.com/{{user.id}}/picture?width=270&height=270"/-->
               <div class="list card">
-              <div class="item item-thumbnail-left">
-                <img class="profile-pic" ng-src="{{sessionUser.user.profilePic.url()}}">
-                <h2>{{ sessionUser.user.firstName}} {{ sessionUser.user.lastName}}</h2>
-                <h2>{{ sessionUser.user.email}}</h2>
+              <div class="item item-thumbnail-right">
+                <span id="profile-circle" class="circle">{{user().firstName | limitTo: 1}}{{user().lastName | limitTo: 1}}</span>
+                <!--img class="profile-pic" ng-src="{{sessionUser.user.profilePic.url()}}"-->
+                <div style="padding-left:100px;">
+                  <div>{{ sessionUser.user.firstName}} {{ sessionUser.user.lastName}}</div>
+                  <div>{{ sessionUser.user.email}}</div>
+                </div>
               </div>
             </div>
             <!--div class="button-bar">

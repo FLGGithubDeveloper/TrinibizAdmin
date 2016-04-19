@@ -1,8 +1,17 @@
 <ion-view title="Signup" name="signup-view">
     <ion-content padding="true" scroll="true" class="has-header">
-      <ion-item>
-          <span>Sign Up to review businesses</span>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz<span>
       </ion-item>
+      <ion-item class="item item-text-wrap" style="border: none;">
+          <span>Get Connected!</span>
+      </ion-item>
+      <ion-item class="item item-text-wrap" style="border: none;">
+          <span>Sign Up to like and review businesses</span>
+      </ion-item>
+    </div>
     <ion-list>
         <form class="list" name="signUpForm" novalidate ng-submit="signupEmail()" >
             <!--ion-list-->
