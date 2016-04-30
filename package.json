@@ -22,10 +22,10 @@
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
     "ionic-plugin-deploy",
-    "cordova-plugin-inappbrowser",
     "cordova-plugin-file-transfer"
   ],
   "cordovaPlatforms": [
-    "android"
+    "android",
+    "ios"
   ]
 }
