@@ -6,8 +6,23 @@
     </button>
   </ion-nav-buttons>
 
+  <div class="float-button">
+  <span class="height-fix">
+    <a ui-sref="app.addBusiness" class="content">
+      <i class="ion-plus-circled"> </i>
+    </a>
+  </span>
+  </div>
+
   <ion-content class="padding">
-    <div class="list">
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
+      </ion-item>
+    </div>
+    <ion-scroll style="height:500px;">
+      <div style="height:5000px;">
       <button style= "border-top-color: #444; border-bottom-color: #ef473a;" class="button button-full button-dark" ng-repeat="business in businesses | orderBy: 'name'" ui-sref="app.business({businessId: business.id, businessName: business.name})" ng-bind="business.name">
 
         <!--div class="row" ng-hide="noBusinesses()"-->

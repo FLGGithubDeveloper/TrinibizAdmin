@@ -1,0 +1,122 @@
+<ion-view view-title="{{title}}">
+<!--ion-nav-buttons side="secondary">
+    <button class="button button-icon icon ion-ios-search-strong" ng-click="showFilterBar()">
+    </button>
+  </ion-nav-buttons-->
+  <ion-content>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
+      </ion-item>
+    </div>
+    <ion-scroll style="height: 500px">
+      <div style="height: 1000px">
+      <form class="list" name="addBusinessForm" novalidate ng-submit="addBusiness()" >
+        <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-social-octocat"></i>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.name.$invalid, 'no-errors' : addBusinessForm.name.$valid}">
+              <input type="text" name="name" placeholder="Business Name" ng-model="data.name" required />
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.name.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+        </ion-item>
+
+        <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-social-chrome-outline"></i>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.website.$invalid, 'no-errors' : addBusinessForm.website.$valid}">
+              <input type="text" name="website" placeholder="Business Website" ng-model="data.website" required />
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.website.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+        </ion-item>
+          <!--services-->
+
+        <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-bowtie outline"></i>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.services.$invalid, 'no-errors' : addBusinessForm.services.$valid}">
+              <input type="text" name="services" placeholder="Business Services" ng-model="data.services" required />
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.services.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+        </ion-item>
+          <!--location-->
+          <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-location assertive"></i>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.street.$invalid, 'no-errors' : addBusinessForm.street.$valid}">
+              <input type="text" name="street" placeholder="Street" ng-model="data.street" required />
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.street.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.city.$invalid, 'no-errors' : addBusinessForm.city.$valid}">
+              <input type="text" name="city" placeholder="City" ng-model="data.city" required />
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.city.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+          </ion-item>
+
+          <!--  Business mphone-->
+          <div class="item item-positive item-divider"><b>Phone Numbers</b></div>
+
+          <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-ios-telephone balanced"></i>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.phone.$invalid, 'no-errors' : addBusinessForm.phone.$valid}">
+              <input type="text" name="phone" placeholder="Business Landline Phone" ng-model="data.phone" required | tel/>
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.phone.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+          </ion-item>
+
+          <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-ios-telephone balanced"></i>
+            <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.mphone.$invalid, 'no-errors' : addBusinessForm.mphone.$valid}">
+              <input type="text" name="mphone" placeholder="Business Mobile Phone" ng-model="data.mphone" required | tel/>
+            </label>
+            <div class="error-container" ng-messages="addBusinessForm.mphone.$error" ng-messages-include="templates/app_messages.html">
+            </div>
+          </ion-item>
+
+          <div class="item item-positive item-divider"><b>Contact Personnel</b></div>
+
+            <ion-card>
+
+                <ion-card-content>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <i class="icon ion-person royal"></i>
+                    <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.contact_firstname.$invalid, 'no-errors' : addBusinessForm.contact_firstname.$valid}">
+                      <input type="text" name="contact_firstname" placeholder="Contact First Name" ng-model="data.contact_firstname" required />
+                    </label>
+                    <div class="error-container" ng-messages="addBusinessForm.contact_firstname.$error"     ng-messages-include="templates/app_messages.html">
+                    </div>
+                  </ion-item>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.contact_lastname.$invalid, 'no-errors' : addBusinessForm.contact_lastname.$valid}">
+                      <input type="text" name="contact_lastname" placeholder="Contact Last Name" ng-model="data.contact_lastname" required />
+                    </label>
+                    <div class="error-container" ng-messages="addBusinessForm.contact_lastname.$error"     ng-messages-include="templates/app_messages.html">
+                    </div>
+                  </ion-item>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.contact_type.$invalid, 'no-errors' : addBusinessForm.contact_type.$valid}">
+                      <input type="text" name="contact_type" placeholder="Contact Type" ng-model="data.contact_type" required />
+                    </label>
+                    <div class="error-container" ng-messages="addBusinessForm.contact_type.$error"     ng-messages-include="templates/app_messages.html">
+                    </div>
+                  </ion-item>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <i class="icon ion-email calm"></i>
+                    <label class="item item-input" ng-class="{ 'has-errors' : addBusinessForm.contact_email.$invalid, 'no-errors' : addBusinessForm.contact_email.$valid}">
+                      <input type="text" name="contact_email" placeholder="Contact Email" ng-model="data.contact_email" required />
+                    </label>
+                    <div class="error-container" ng-messages="addBusinessForm.contact_email.$error"     ng-messages-include="templates/app_messages.html">
+                    </div>
+                  </ion-item>
+                </ion-card-content>
+          </ion-card>
+    <button ng-disabled="addBusinessForm.$invalid" class="button button-stable button-block">
+        Add Business
+    </button>
+  </form>
+  </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </ion-scroll>
+  </ion-content>
+</ion-view>

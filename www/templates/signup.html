@@ -3,55 +3,57 @@
     <div class="card">
       <ion-item class-="item item-thumbnail-left">
         <img class="category-pic" ng-src="assets\img\icon.png" >
-        <span style="font-family: Arial Black; text-align: center;">TriniBiz<span>
-      </ion-item>
-      <ion-item class="item item-text-wrap" style="border: none;">
-          <span>Get Connected!</span>
-      </ion-item>
-      <ion-item class="item item-text-wrap" style="border: none;">
-          <span>Sign Up to like and review businesses</span>
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
       </ion-item>
     </div>
-    <ion-list>
+    <ion-scroll style="height:500px;">
+      <div style="height:700px;">
         <form class="list" name="signUpForm" novalidate ng-submit="signupEmail()" >
             <!--ion-list-->
-                <div class="list">
+                <!--div class="list"-->
+                <ion-item class="item item-icon-left item-text-wrap">
                   <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.firstname.$invalid, 'no-errors' : signUpForm.firstname.$valid}">
                      <input type="text" name="firstname" placeholder="Enter First Name" ng-model="data.firstname" required />
                   </label>
                   <div class="error-container" ng-messages="signUpForm.firstname.$error" ng-messages-include="templates/app_messages.html"></div >
+                  </ion-item>
 
-
+                  <ion-item class="item item-icon-left item-text-wrap">
                    <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.lastname.$invalid, 'no-errors' : signUpForm.lastname.$valid}">
                       <input type="text" name="lastname" placeholder="Enter Last Name" ng-model="data.lastname" required />
                     </label>
                     <div class="error-container" ng-messages="signUpForm.lastname.$error" ng-messages-include="templates/app_messages.html"></div>
+                  </ion-item>
 
-
-
+                <ion-item class="item item-icon-left item-text-wrap">
                  <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.username.$invalid, 'no-errors' : signUpForm.username.$valid}">
                     <input type="email" name="username" placeholder="Enter Email as Username" ng-model="data.username" required />
                   </label>
                   <div class="error-container" ng-messages="signUpForm.username.$error" ng-messages-include="templates/app_messages.html"></div>
+                </ion-item>
 
+                <ion-item class="item item-icon-left item-text-wrap">
+                  <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.password.$invalid, 'no-errors' : signUpForm.password.$valid}">
+                    <input type="password" name="password" placeholder="Enter Password - At least 6 characters" ng-model="data.password" ng-minlength="6" required/>
+                  </label>
+                  <div class="error-container" ng-messages="signUpForm.password.$error" ng-messages-include="templates/app_messages.html"></div>
+                </ion-item>
 
-                <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.password.$invalid, 'no-errors' : signUpForm.password.$valid}">
-                  <input type="password" name="password" placeholder="Enter Password - At least 6 characters" ng-model="data.password" ng-minlength="6" required/>
-                </label>
-                <div class="error-container" ng-messages="signUpForm.password.$error" ng-messages-include="templates/app_messages.html"></div>
-
-
-                <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.confirmPassword.$invalid, 'no-errors' : signUpForm.confirmPassword.$valid}">
+                <ion-item class="item item-icon-left item-text-wrap">
+                  <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.confirmPassword.$invalid, 'no-errors' : signUpForm.confirmPassword.$valid}">
                     <input type="password" name="confirmPassword" placeholder="Confirm password - Same as password" ng-model="data.confirmPassword" ng-minlength="6" required compare-to="data.password" />
-                </label>
-                <div class="error-container" ng-messages="signUpForm.confirmPassword.$error" ng-messages-include="templates/app_messages.html"></div>
+                  </label>
+                  <div class="error-container" ng-messages="signUpForm.confirmPassword.$error" ng-messages-include="templates/app_messages.html"></div>
+                </ion-item>
 
                 <button ng-disabled="signUpForm.$invalid" class="button button-stable button-block">
                     Sign up
                 </button>
-            </div>
+            <!--/div-->
         </form>
-      </ion-list>
+      </div>
+      </div>
+      </ion-scroll>
     </ion-content>
 
 </ion-view>

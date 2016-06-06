@@ -11,6 +11,9 @@
     "ionic-toast": "~0.2.0"
   },
   "resolutions": {
-    "ionic-platform-web-client": "^0.7.1"
+    "ionic-platform-web-client": "^0.7.1",
+    "angular-sanitize": "1.5.3",
+    "angular-animate": "1.5.3",
+    "angular": "1.5.3"
   }
 }

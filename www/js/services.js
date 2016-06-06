@@ -1,5 +1,23 @@
 angular.module('trinibiz.services', [])
 
+.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, uploadUrl){
+      var fd = new FormData();
+      fd.append('file', file);
+
+      $http.post(uploadUrl, fd, {
+          transformRequest: angular.identity,
+          headers: {'Content-Type': undefined}
+      })
+
+      .success(function(){
+      })
+
+      .error(function(){
+      });
+  }
+}])
+
 .factory('AppActions', function() {
     return {
       like: "like",
@@ -13,7 +31,12 @@ angular.module('trinibiz.services', [])
       view_profile: "view_profile",
       view_settings: "view_settings",
       view_terms: "view_terms",
-      view_invite: "view_invite"
+      view_invite: "view_invite",
+      addBusiness: "addBusiness",
+      editBusiness: "editBusiness",
+      deleteBusiness: "deleteBusiness",
+      editUser:"editUser",
+      addUser: "addUser"
     };
 })
 
@@ -31,22 +54,29 @@ angular.module('trinibiz.services', [])
       terms: "terms",
       invite:"invite",
     //  registerBiz: "registerBiz",
-      businessNames: "businessNames"
+      businessNames: "businessNames",
+      addBusiness: "addBusiness",
+      editBusiness: "editBusiness",
+      users: "users",
+      addUser: "addUser",
+      editUser: "editUser"
     }
 })
 
 .factory('RolesPermissions', ['USER_ROLES', 'AppViews', 'AppActions', function(USER_ROLES, AppViews, AppActions) {
     var abilities = {}
-    abilities[USER_ROLES.user] = [AppViews.noresults,AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppViews.terms,AppViews.invite, /*AppViews.registerBiz,*/ AppActions.like,
+    abilities[USER_ROLES.user] = [AppViews.noresults,AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppViews.terms,AppViews.invite, AppViews.users,/*AppViews.registerBiz,*/ AppActions.like,
       AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite, /*AppActions.registerBiz*/
     ];
-    abilities[USER_ROLES.owner] = [AppViews.noresults, AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
-      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
+    abilities[USER_ROLES.admin] = [AppViews.noresults, AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite, AppViews.addBusiness, AppViews.editBusiness, AppViews.users, AppViews.addUser, AppViews.editUser,
+      AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite, AppActions.addBusiness, AppActions.editBusiness, AppActions.deleteBusiness, AppActions.addUser, AppActions.editUser
+    ];
+    /*abilities[USER_ROLES.owner] = [AppViews.noresults, AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite, AppViews.editBusiness, AppViews.addCategory,AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite, AppActions.addCategory, AppActions.editBusiness, AppActions.deleteBusiness
     ];
     abilities[USER_ROLES.sprovider] = [AppViews.noresults, AppViews.nobusinesses, AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.profile, AppViews.categories, AppViews.settings, AppActions.like,AppViews.terms,AppViews.invite,
       AppActions.review, AppActions.call, AppActions.email, AppActions.logout, AppActions.view_profile, AppActions.view_terms, AppActions.view_invite
-    ];
-    abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.nobusinesses,AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.categories, AppViews.signup, AppViews.login, AppViews.settings, AppViews.terms, AppViews.invite,
+    ];*/
+    abilities[USER_ROLES.guest] = [AppViews.noresults,AppViews.nobusinesses,AppViews.menu, AppViews.business, AppViews.businessNames, AppViews.categories, AppViews.signup, AppViews.login, AppViews.settings, AppViews.terms, AppViews.invite, AppViews.users,
       AppActions.signup, AppActions.login, AppActions.call, AppActions.email, AppActions.view_terms, AppActions.view_invite
     ];
     return abilities;
@@ -73,6 +103,13 @@ angular.module('trinibiz.services', [])
     var hasRole = AclService.hasRole;
     var flushRoles = AclService.flushRoles;
     var attachRole = AclService.attachRole;
+
+    var getAllUsers = function() {
+      var User = ParseFactory.Object.extend("User");
+      var query = new ParseFactory.Query(User);
+      return query.find();
+    }
+
     var getUser = function() {
       return $rootScope.sessionUser.user;
     }
@@ -102,18 +139,22 @@ angular.module('trinibiz.services', [])
       setUser(user);
       flushRoles();
       //attachRole(USER_ROLES.user);
-      if(getUser().type == USER_ROLES.owner){
-        attachRole(USER_ROLES.owner);
+      if(getUser().type == USER_ROLES.admin){
+        attachRole(USER_ROLES.admin);
       }
       else{
-        if(getUser().type == USER_ROLES.sprovider){
-          attachRole(USER_ROLES.sprovider);
+        if(getUser().type == USER_ROLES.owner){
+          attachRole(USER_ROLES.owner);
         }
         else{
-            attachRole(USER_ROLES.user);
+          if(getUser().type == USER_ROLES.sprovider){
+            attachRole(USER_ROLES.sprovider);
+          }
+          else{
+              attachRole(USER_ROLES.user);
+          }
         }
       }
-
     }
     var logOut = function() {
       ParseFactory.User.logOut();
@@ -125,14 +166,8 @@ angular.module('trinibiz.services', [])
       ParseFactory.User.logIn(username, password, {
         success: function(user) {
           ParseFactory.User.become(user.getSessionToken()).then(function(user) {
-          //  if(user.get("emailVerified")){
               initialiseSession(user);
               success(user);
-        //    }
-          /*  else{
-              alert("Please verify your email address to login");
-            }*/
-
           }, function(error) {
             alert("The session was not initialised")
           });
@@ -148,6 +183,11 @@ angular.module('trinibiz.services', [])
         return true;
       }
       return false;
+    }
+
+    var isAdmin = function(){
+      return AclService.hasRole(USER_ROLES.admin);
+
     }
 
     var isOwner = function(){
@@ -167,6 +207,7 @@ angular.module('trinibiz.services', [])
 
     var register = function(firstname, lastname,username, password, email) {
 
+
       var user = new ParseFactory.User();
       user.set("firstName", firstname);
       user.set("lastName", lastname);
@@ -185,6 +226,17 @@ angular.module('trinibiz.services', [])
         alert("Error: " + error.code + " " + error.message);
       }
       });
+    }
+
+    var getUserDetails = function(userId){
+      var User = ParseFactory.Object.extend("User");
+      var query = new ParseFactory.Query(User);
+      if (userId !== undefined && userId !== "") {
+        query.equalTo("objectId", userId);
+      }
+
+      return query.find();
+
     }
 
     var resetPassword = function(email) {
@@ -267,14 +319,17 @@ angular.module('trinibiz.services', [])
     }
     return {
       hasRole: hasRole,
+      getAllUsers: getAllUsers,
       getUser: getUser,
       getUserId: getUserId,
+      getUserDetails: getUserDetails,
       emailVerified: emailVerified,
       setUser: setUser,
       unsetUser: unsetUser,
       isLoggedIn: isLoggedIn,
       flushRoles: flushRoles,
       attachRole: attachRole,
+      isAdmin: isAdmin,
       isOwner: isOwner,
       isSProvider: isSProvider,
       isRegular: isRegular,
@@ -289,14 +344,38 @@ angular.module('trinibiz.services', [])
     }
   }])
 
-.service('CategoriesService', ['ParseFactory', function(ParseFactory) {
+.service('CategoriesService', ['ParseFactory', '$q', 'ToastService', function(ParseFactory, $q, ToastService) {
     var getAllCategories = function() {
       var BusinessCategory = ParseFactory.Object.extend("BusinessCategory");
       var query = new ParseFactory.Query(BusinessCategory);
       return query.find();
     }
+
+    // Create the object.
+    var addCategory = function(name){
+      var deferred = $q.defer();
+      var BusinessCategory = ParseFactory.Object.extend("BusinessCategory");
+      var category = new BusinessCategory();
+
+      category.set("name", name);
+
+
+      category.save(null, {
+        success: function(category) {
+          ToastService.showToast("Success!, you added the category "+ name);
+          deferred.resolve(category);
+        }, error: function(category, error) {
+        // Show the error message somewhere and let the user try again.
+        deferred.reject(category);
+        alert("Failed to add category, error: " + error.code + " " + error.message);
+      }
+      });
+      return deferred.promise;
+    }
+
     return {
       getAllCategories: getAllCategories,
+      addCategory: addCategory
     }
 }])
 
@@ -379,7 +458,7 @@ angular.module('trinibiz.services', [])
                 alert('Congratulations! You will be contacted in 3 business days via the email you listed in the registration.');
               },
               error: function(user,error){
-                alert('Failed to register new Biz ' +              error.message);
+                alert('Failed to register new Biz ' +  error.message);
               }
             });
         },
@@ -494,38 +573,36 @@ angular.module('trinibiz.services', [])
       var Business = ParseFactory.Object.extend("Business");
       var query = new ParseFactory.Query(Business);
       if (businessId !== undefined && businessId !== "") {
-        // if($sessionStorage["categoryBusinesses"][categoryId]){
-        //   //if localStorage with businesses in a specific category
-        //   //is set already set
-        //   return new Promise(function(resolve, reject) {
-        //     resolve($sessionStorage["categoryBusinesses"][categoryId]);
-        //     //return localStorage businesses.
-        //   });
-        // }
-      /*  var category = {
-          "__type": "Pointer",
-          "className": "BusinessCategory",
-          "objectId": categoryId
-        };*/
         query.equalTo("objectId", businessId);
       }
-        // }else {
-        //   if($sessionStorage["allBusinesses"].length > 0){//if localStorage has all the businesses already stored
-        //   //  $ionicLoading.hide();
-        //     return new Promise(function(resolve, reject) {
-        //       resolve($sessionStorage["allBusinesses"]);
-        //     });
-        //   }
-        // }
+
       return query.find().then(function(results){
         var mappedBusinesses = mapBusinesses(results);
-        // if(categoryId){
-        //   $sessionStorage["categoryBusinesses"][categoryId] = mappedBusinesses;
-        // }else if(Boolean(ownerBusinesses) == false) {
-        //   $sessionStorage["allBusinesses"] = mappedBusinesses;
-        // }
+
         return mappedBusinesses;
       });
+    }
+
+    var  deleteBusiness = function(businessId){
+
+    var Business = ParseFactory.Object.extend("Business");
+      var query = new ParseFactory.Query("Business");
+      query.get(businessId,{
+        success: function(business){
+          business.destroy({
+            success: function(business){
+              return true;
+            },
+            error: function(business, error){
+              return false;
+            }
+          });
+        },
+        error: function (object, error){
+          return  false;
+        }
+      })
+
     }
 
     var likeUnlike = function(business) {
@@ -600,6 +677,7 @@ angular.module('trinibiz.services', [])
     }
     return {
       getBusinesses: getBusinesses,
+      deleteBusiness: deleteBusiness,
       getBusinessDetails: getBusinessDetails,
       registerBiz:  registerBiz,
       likeUnlike: likeUnlike,
@@ -608,39 +686,3 @@ angular.module('trinibiz.services', [])
       submitReview: submitReview
     }
   }])
-
-/*.service('ParseErrorHandler', function(){
-
-  var handleParseError = function(err){
-    switch (err.code) {
-     case Parse.Error.INVALID_SESSION_TOKEN:
-       Parse.User.logOut();
-       $scope.go('app.login');
-       break;
-     case Parse.Error.InternalServerError:
-       alert("Error accessing our online servers. Please be patient, our engineers are working to correct the problem");
-       $scope.go('app.login');//change this to a No Response page
-       break;
-     case Parse.Error.ConnectionFailed:
-       alert("Error connecting to our online servers. Please check your phone settings and try again.If this does not work, please verify connectivity with your service provider, our your WiFi network");
-       $scope.go('app.login'); //change to connection failed page
-       break;
-     case Parse.Error.UsernameTaken:
-        alert("The email provided has already been registered as a user with TriniBiz. Please try another email or login with the email provided");
-        $scope.go('app.login');
-        break;
-     case Parse.Error.AccountAlreadyLinked:
-        alert("This account has already been linked to another user");
-        $scope.go('app.login');
-        break;
-     default:
-        alert("TriniBiz is experiencing a technical problem and must exit.");
-      // Other Parse API errors that you want to explicit handle
-      //List of Parse.com Error Codes to reference at link below
-      //T_Parse_ParseException_ErrorCode.htm
-  }
-  return {
-    handleParseError: handleParseError,
-  }
-})
-  */

@@ -15,6 +15,7 @@ export class IonicPlatform {
     this.logger.info('init');
     this._pluginsReady = false;
     this.emitter = IonicPlatform.getEmitter();
+
     this._bootstrap();
 
     if (self.cordovaPlatformUnknown) {

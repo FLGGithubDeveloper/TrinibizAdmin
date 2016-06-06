@@ -5,13 +5,30 @@
     </button>
   </ion-nav-buttons>
 
+  <div class="float-button">
+  <span class="height-fix">
+    <a ui-sref="app.addCategory" class="content">
+      <i class="ion-plus-circled"> </i>
+    </a>
+  </span>
+  </div>
+
+
   <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="category in categories | orderBy: 'name'" ui-sref="app.businessNames({categoryId: category.id, categoryName: category.name})">
-      <img class="category-pic" ng-src="assets\img\categories\{{category.name}}.jpg" >
-      <span ng-bind="category.name"><span>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
       </ion-item>
-    </ion-list>
+    </div>
+    <ion-scroll style="height:500px;">
+      <div style="height:3000px;">
+          <ion-item ng-repeat="category in categories | orderBy: 'name'" ui-sref="app.businessNames({categoryId: category.id, categoryName: category.name})">
+            <img class="category-pic" ng-src="assets\img\categories\{{category.name}}.jpg" >
+            <span ng-bind="category.name"><span>
+          </ion-item>
+      </div>
+    </ion-scroll>
     <!--div ng-show="filterBarStatus == 'dirty' && !categories.length" class="no-results" ng-cloak>
      <no-results></no-results>
    </div-->

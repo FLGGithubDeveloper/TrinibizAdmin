@@ -1,0 +1,44 @@
+<ion-view view-title="Users" name="users">
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon icon ion-ios-search-strong" ng-click="showFilterBar()">
+    </button>
+  </ion-nav-buttons>
+
+  <div class="float-button">
+  <span class="height-fix">
+    <a ui-sref="app.addUser" class="content">
+      <i class="ion-plus-circled"> </i>
+    </a>
+  </span>
+  </div>
+
+
+  <ion-content>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
+      </ion-item>
+    </div>
+    <ion-scroll style="height:500px;">
+      <div style="height:3000px;">
+          <!--button style= "border-top-color: #444; border-bottom-color: #ef473a;" class="button button-full button-dark " ng-repeat="user in users | orderBy: 'name'" ui-sref="app.userDetails({userId: user.id, userName: user.name})">
+
+
+            <span>Username: {{user.uname}} Full name: {{user.fname}} {{user.lname}}<span-->
+
+              <a class="item item-icon-left" ng-repeat="user in users | orderBy: 'name'" href="#" ui-sref="app.userDetails({userId: user.id, userName: user.uname})">
+                <i class="icon ion-person royal"></i>
+                   {{user.fname}} {{user.lname}}
+                  <span class="item-note">
+                    {{user.uname}}
+                  </span>
+              </a>
+      </div>
+    </ion-scroll>
+    <!--div ng-show="filterBarStatus == 'dirty' && !categories.length" class="no-results" ng-cloak>
+     <no-results></no-results>
+   </div-->
+  </ion-content>
+</ion-view>

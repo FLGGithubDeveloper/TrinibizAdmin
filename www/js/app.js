@@ -2,7 +2,8 @@
 // Ionic trinibiz App
 
 angular.module('trinibiz', [
-  'ionic', 'ionic.service.core',
+  'ionic',
+  'ngFileUpload',
   'ionic-toast',
   'ionic.rating',
   'trinibiz.controllers',
@@ -26,6 +27,7 @@ angular.module('trinibiz', [
 })
 .constant("GUEST_USER",{role: 'guest',user: null})
 .constant("USER_ROLES", {
+    admin: 'admin',
     user: 'regular',
     guest: 'guest',
     owner: 'owner',

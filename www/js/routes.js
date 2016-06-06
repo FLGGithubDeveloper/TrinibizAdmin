@@ -21,12 +21,112 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
         }]
       }
     })
+    .state('app.users', {
+      url: "/users",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/users.html",
+          controller: 'UsersCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.users)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
+    .state('app.userDetails', {
+      url: "/users/:userId?userName",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/userDetails.html",
+          controller: 'UserDetailsCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.users)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
+    .state('app.addUser', {
+      url: "/addUser",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/addUser.html",
+          controller: 'UserDetailsCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.addUser)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
+    .state('app.editUser', {
+      url: "/editUser/:userId?userName",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/editUser.html",
+          controller: 'UserDetailsCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.editUser)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
     .state('app.categories', {
       url: "/categories",
       views: {
         'menuContent': {
           templateUrl: "templates/categories.html",
-          controller: 'AppController'
+          controller: 'CategoriesCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.categories)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
+    .state('app.addCategory', {
+      url: "/addCategory",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/addCategory.html",
+          controller: 'CategoriesCtrl'
         }
       },
       resolve : {
@@ -52,6 +152,45 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
       resolve : {
         'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
           if(AclService.can(AppViews.businessNames)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    }).state('app.addBusiness', {
+      url: "/addBusiness/",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/addBusiness.html",
+          controller: 'BusinessDetailsCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.addBusiness)){
+            // Has proper permissions
+            return true;
+          } else {
+            // Does not have permission
+            return $q.reject('Unauthorized');
+          }
+        }]
+      }
+    })
+    .state('app.editBusiness', {
+      url: "/editBusiness/:businessId?businessName",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/editBusiness.html",
+          controller: 'BusinessDetailsCtrl'
+        }
+      },
+      resolve : {
+        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
+          if(AclService.can(AppViews.editBusiness)){
             // Has proper permissions
             return true;
           } else {
@@ -92,26 +231,6 @@ config(function($stateProvider, $urlRouterProvider, $ionicFilterBarConfigProvide
       resolve : {
         'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
           if(AclService.can(AppViews.business)){
-            // Has proper permissions
-            return true;
-          } else {
-            // Does not have permission
-            return $q.reject('Unauthorized');
-          }
-        }]
-      }
-    })
-    .state('app.userbusinesses', {
-      url: "/businessNames/:categoryId?/:categoryName/:ownerBusinesses?",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/businessNames.html",
-          controller: 'BusinessesCtrl'
-        }
-      },
-      resolve : {
-        'acl' : ['$q', 'AclService','AppViews', function($q, AclService,AppViews){
-          if(AclService.can(AppViews.businessNames)){
             // Has proper permissions
             return true;
           } else {

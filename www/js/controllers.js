@@ -29,12 +29,48 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
  };
 });*/
 
-.controller('AppController', function($scope, $ionicFilterBar, $ionicScrollDelegate, $timeout, CategoriesService,ToastService, $ionicLoading, $state) {
+.controller('MainCtrl', function($scope, $ionicPopup) {
+
+
+})
+.controller('CategoriesCtrl', [ '$scope', '$ionicFilterBar', '$ionicScrollDelegate', '$timeout', 'CategoriesService','ToastService', '$ionicLoading', '$state', '$ionicHistory', 'Upload', function($scope, $ionicFilterBar, $ionicScrollDelegate, $timeout, CategoriesService,ToastService, $ionicLoading, $state, $ionicHistory, Upload) {
 
   $scope.filterBarInstance = "";
   $scope.filterBarStatus = "clean";
   var scope = this;
   $scope.categories = {};
+  $scope.data = {};
+
+  $scope.addCategory = function(file){
+    file.upload =  Upload.upload({
+      url: 'cdvfile://localhost/\assets/\img/\categories/',
+      data: {file: file},
+    });
+
+  file.upload.then(function (response) {
+    $timeout(function () {
+      file.result = response.data;
+    });
+  }, function (response) {
+    if (response.status > 0)
+      $scope.errorMsg = response.status + ': ' + response.data;
+  }, function (evt) {
+    // Math.min is to fix IE which reports 200% sometimes
+    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+  });
+    CategoriesService.addCategory($scope.data.category).then(function(results){
+
+      ToastService.showToast("Category "+$scope.data.category+" was added to TriniBiz");
+      $state.go('app.categories');
+      $ionicHistory.nextViewOptions({
+        disableBack: true
+      });
+    }, function(error) {
+      $scope.$apply(function(){
+        ToastService.showToast(error.message);
+      });
+    });
+  }
 
 
   function getCategories() {
@@ -52,7 +88,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
       });
     }, function(err){
       $ionicLoading.hide();
-      ToastService.showToast("Something went wrong while retrieving data ,, please check your connection.");
+      ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
     });
   }
 
@@ -77,7 +113,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
     });
   }
 
-})
+}])
 
 .controller('BusinessesCtrl', function($scope, $ionicFilterBar, $ionicScrollDelegate, $timeout, BusinessesService,ToastService, $ionicLoading, $state, $stateParams) {
 
@@ -156,7 +192,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
 })
 
-.controller('BusinessDetailsCtrl', function($scope, $state, $stateParams, $ionicFilterBar, USER_ROLES, GUEST_USER, UserService, AppActions, AppViews, BusinessesService, $ionicLoading,ToastService, $cordovaEmailComposer) {
+.controller('BusinessDetailsCtrl', function($scope, $state, $stateParams, $ionicFilterBar, USER_ROLES, GUEST_USER, UserService, AppActions, AppViews, BusinessesService, $ionicLoading,ToastService, $cordovaEmailComposer, $ionicPopup) {
 
   $scope.can = UserService.can;
   $scope.appActions = AppActions;
@@ -167,7 +203,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.review.rating = 3;
   $scope.review.max = 5;
   $scope.readOnly = true;
-  $scope.businesses = {};
+  $scope.business = {};
 
 
   if ($stateParams.businessName !== undefined) {
@@ -181,10 +217,29 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
       window.open(website,'_blank');
   };
 
+  $scope.showConfirm = function(businessId) {
+     var confirmPopup = $ionicPopup.confirm({
+       title: 'Delete',
+       template: 'Are you sure you want to delete this?'
+     });
+
+     confirmPopup.then(function(res) {
+       if(res) {
+         BusinessesService.deleteBusiness(businessId);
+             ToastService.showToast("Business was successfully deleted");
+             $ionicHistory.goBack();          //console.log('Deleted !');
+
+        } else {
+         ToastService.showToast("Something went wrong while deleting data, delete was unsuccessful.");
+         //console.log('Deletion canceled !');
+       }
+     });
+   };
+
 
   function getBusinessDetails() {
     return BusinessesService.getBusinessDetails($stateParams.businessId).then(function(results) {
-      $scope.businesses = results; //the scope goverened by BusinessCtrl has all the businesses downloaded
+      $scope.business = results; //the scope goverened by BusinessCtrl has all the businesses downloaded
       $ionicLoading.hide();
     }, function(err){
       $ionicLoading.hide();
@@ -195,6 +250,29 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
 
   $ionicLoading.show();
   getBusinessDetails();
+
+  /*function addBusiness (){
+
+      BusinessesService.registerBiz(owner_id, $scope.data.usertype,$scope.data.category.id,$scope.data.name,$scope.data.street, $scope.data.city,$scope.data.email,$scope.data.phone,$scope.data.mphone, $scope.data.website,$scope.data.services);
+        $ionicHistory.nextViewOptions({
+          disableBack:true
+        });
+      /*  ToastService.showToast("Your business has been successfully registered, with TriniBiz. The next time you log in your profile will be updated.");*/
+    /*    $state.go('app.categories');
+
+
+
+  }*/
+/*
+  function deleteBusiness(){
+    BusinessesService.deleteBusiness($scope.business.id).then(function (results){
+      ToastService.showToast("Business was successfully deleted");
+      $ionicHistory.goBack();
+    },
+    function(err){
+      ToastService.showToast("Something went wrong while deleting data, delete was unsuccessful.");
+    });
+  }*/
 
   $scope.refresh = function(){
 
@@ -225,7 +303,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   };
 
   $scope.isAuthenticated = function() {
-    return UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
+    return UserService.hasRole(USER_ROLES.admin) || UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
     UserService.hasRole(USER_ROLES.owner);
   };
 
@@ -355,10 +433,10 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.appActions = AppActions;
   $scope.user = UserService.getUser;
 
-  var deploy = new Ionic.Deploy();
+  //var deploy = new Ionic.Deploy();
 
   // Update app code with new release from Ionic Deploy
-  $scope.doUpdate = function() {
+/*  $scope.doUpdate = function() {
     deploy.update().then(function(res) {
       console.log('Ionic Deploy: Update Success! ', res);
     }, function(err) {
@@ -377,7 +455,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
     }, function(err) {
       console.error('Ionic Deploy: Unable to check for updates', err);
     });
-  }
+  }*/
 
 
   $scope.logOut = function() {
@@ -394,8 +472,12 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   }
 
   $scope.isAuthenticated = function(){
-    return UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
+    return UserService.isAdmin() || UserService.hasRole(USER_ROLES.user)|| UserService.hasRole(USER_ROLES.sprovider)||
     UserService.hasRole(USER_ROLES.owner);
+  }
+
+  $scope.isAdmin = function() {
+    return UserService.isAdmin();
   }
 
   $scope.isOwner = function() {
@@ -407,7 +489,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   }
 
   $scope.isRegular = function() {
-    return UserService.hasRole(USER_ROLES.user);
+    return UserService.isRegular();
   }
 
   $scope.isSupplier = function(){
@@ -421,9 +503,9 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   $scope.data = {};
   $scope.categories = {};
   $scope.userTypeList = [
-  { text: "Business Owner", value: "owner" },
-  { text: "Service Provider", value: "sprovider" }
-];
+      { text: "Business Owner", value: "owner" },
+      { text: "Service Provider", value: "sprovider" }
+  ];
 
   function getCategories() {
 
@@ -440,7 +522,7 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
       });
     }, function(err){
       $ionicLoading.hide();
-      ToastService.showToast("Something went wrong while retrieving data ,, please check your connection.");
+      ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
     });
   }
 
@@ -460,6 +542,98 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
   }
 
 })
+
+.controller('UserDetailsCtrl', function($scope, $state, $stateParams, UserService, AppActions, AppViews, ToastService, $ionicLoading){
+  $scope.can = UserService.can;
+  $scope.appActions = AppActions;
+  $scope.appViews = AppViews;
+
+  $scope.user = {};
+  $scope.userTypeList = [
+      { text: "Business Owner", value: "owner" },
+      { text: "Service Provider", value: "sprovider" }
+  ];
+
+  if ($stateParams.userName !== undefined) {
+    $scope.title = $stateParams.userName;
+  }
+
+  function getUserDetails() {
+    UserService.getUserDetails($stateParams.userId).then(function(result){
+      $ionicLoading.hide();
+      $scope.user = result.map(function(u){
+        return {
+            "uname": u.get("username"),
+            "fname": u.get("firstName"),
+            "lname": u.get("lastName"),
+            "type": u.get("type"),
+            "email": u.get("email"),
+            "id": u.id
+        }
+      });
+    }, function(err){
+      $ionicLoading.hide();
+      ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
+    });
+
+  }
+
+
+  $ionicLoading.show();
+  getUserDetails();
+
+
+})
+
+.controller('UsersCtrl', function($scope, $state, UserService, ToastService, $ionicLoading, $ionicFilterBar, $ionicScrollDelegate){
+  $scope.filterBarInstance = "";
+  $scope.filterBarStatus = "clean";
+  var scope = this;
+  $scope.users = {};
+
+  $scope.data = {};
+
+
+  function getUsers() {
+
+    UserService.getAllUsers().then(function(results) {
+      $ionicLoading.hide();
+      $scope.users = results.map(function(u) {
+        return {
+          "uname": u.get("username"),
+          "fname": u.get("firstName"),
+          "lname": u.get("lastName"),
+          "id": u.id,
+        //  "frequency": c.get("frequency")
+        }
+      });
+    }, function(err){
+      $ionicLoading.hide();
+      ToastService.showToast("Something went wrong while retrieving data, please check your connection.");
+    });
+  }
+
+  $ionicLoading.show();
+  getUsers();
+
+  $scope.showFilterBar = function() {
+    $ionicScrollDelegate.scrollTop();
+    scope.filterBarInstance = $ionicFilterBar.show({
+      items: $scope.users,
+      update: function(filteredItems, filteredText) {
+        if(filteredItems.length == 0 && filteredText !== 'undefined'){
+         $state.go('app.noresults');
+          //$location.path("templates/no-results.html")
+        }
+        else{
+          $scope.users = filteredItems;
+            $scope.filterBarStatus = "dirty";
+        }
+      },
+      filterProperties: ['uname']
+    });
+  }
+})
 .controller('RegistrationCtrl', function($scope, $state, $cordovaOauth, $ionicPlatform,$ionicHistory, UserService, ToastService) {
 
     $scope.data = {};
@@ -469,10 +643,10 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
       UserService.register($scope.data.firstname, $scope.data.lastname, $scope.data.username, $scope.data.password, $scope.data.username)
         .then(function(user) {
         /*  ToastService.showToast('Please check your email to verify your account');*/
-            $state.go('app.login');
+          $state.go('app.login');
           $ionicHistory.nextViewOptions({
-         disableBack: true
-       });
+            disableBack: true
+          });
         }, function(error) {
           $scope.$apply(function(){
             ToastService.showToast(error.message);
@@ -565,7 +739,6 @@ angular.module('trinibiz.controllers', ['jett.ionic.filter.bar'])
     }
   }
 })
-
 .controller('ProfileCtrl', function($scope) {
 
 })

@@ -1,0 +1,103 @@
+<ion-view view-title="{{title}}">
+<!--ion-nav-buttons side="secondary">
+    <button class="button button-icon icon ion-ios-search-strong" ng-click="showFilterBar()">
+    </button>
+  </ion-nav-buttons-->
+  <ion-content>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
+      </ion-item>
+    </div>
+    <ion-scroll style="height: 500px">
+      <div style="height: 1000px">
+      <form class="list" name="editBusinessForm" novalidate ng-submit="editBusiness()" >
+      <div  ng-repeat="business in business | orderBy: 'name' ">
+
+        <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-social-chrome-outline"></i>
+            <label class="item item-input" >
+              <input type="text" name="website" placeholder="{{business.website}}" ng-model="data.website"/>
+            </label>
+
+        </ion-item>
+          <!--services-->
+
+        <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-bowtie outline"></i>
+            <label class="item item-input">
+              <input type="text" name="services" placeholder="{{business.services}}" ng-model="data.services"/>
+            </label>
+
+        </ion-item>
+          <!--location-->
+          <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-location assertive"></i>
+            <label class="item item-input">
+              <input type="text" name="street" placeholder="{{business.street}}" ng-model="data.street"/>
+            </label>
+
+            <label class="item item-input">
+              <input type="text" name="city" placeholder="{{business.city}}" ng-model="data.city"/>
+            </label>
+
+          </ion-item>
+
+          <!--  Business mphone-->
+          <div class="item item-positive item-divider"><b>Phone Numbers</b></div>
+
+          <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-ios-telephone balanced"></i>
+            <label class="item item-input">
+              <input type="text" name="phone" placeholder="{{business.phone}}" ng-model="data.phone"/>
+            </label>
+
+          </ion-item>
+
+          <ion-item class="item item-icon-left item-text-wrap">
+            <i class="icon ion-ios-telephone balanced"></i>
+            <label class="item item-input">
+              <input type="text" name="mphone" placeholder="{{business.mphone}}" ng-model="data.mphone"/>
+            </label>
+          </ion-item>
+
+          <div class="item item-positive item-divider"><b>Contact Personnel</b></div>
+
+
+          <div  ng-repeat="contact in business.contactPersons" class="card">
+
+            <ion-card>
+                <ion-card-header>
+                  <b>{{contact.type | capitalize}}</b>
+                </ion-card-header>
+
+                <ion-card-content>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <i class="icon ion-person royal"></i>
+                    <label class="item item-input">
+                      <input type="text" name="contact_firstname" placeholder="{{contact.firstName}}" ng-model="data.contact_firstname"/>
+                    </label>
+                  </ion-item>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <label class="item item-input">
+                      <input type="text" name="contact_lastname" placeholder="{{contact.lastName}}" ng-model="data.contact_lastname"/>
+                    </label>
+                  </ion-item>
+                  <ion-item class="item item-icon-left item-text-wrap">
+                    <i class="icon ion-email calm"></i>
+                    <label class="item item-input">
+                      <input type="text" name="contact_email" placeholder="{{contact.email}}" ng-model="data.contact_email"/>
+                    </label>
+                  </ion-item>
+                </ion-card-content>
+          </ion-card>
+        </div>
+    </div>
+    <button ng-disabled="editBusinessForm.$invalid" class="button button-stable button-block">
+        Update
+    </button>
+  </form>
+  </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           </ion-scroll>
+  </ion-content>
+</ion-view>

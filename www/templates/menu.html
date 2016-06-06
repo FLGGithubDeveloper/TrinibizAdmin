@@ -38,8 +38,12 @@
                   Biz Portfolio
                 </button>
 
-                <button menu-close ui-sref="app.registerBiz" class="button button-small button-assertive" ng-show="can(appViews.registerBiz)">
+                <!--button menu-close ui-sref="app.registerBiz" class="button button-small button-assertive" ng-show="can(appViews.registerBiz)">
                   Add a Biz
+                </button-->
+
+                <button menu-close ui-sref="app.addCategory" class="button button-small button-positive" ng-show="can(appViews.addCategory)">
+                  Add Category
                 </button>
               </div>
               <b class="caret"></b>
@@ -49,6 +53,11 @@
               <img id="profile-circle" class="circle" ng-src="assets\img\categories\guestUser.jpg">
               <span style="padding-left:100px;">Guest User</span>
               <b class="caret"></b>
+          </ion-item>
+
+
+          <ion-item class="item-dark" menu-close ui-sref="app.users" ng-show="can(appViews.users)">
+            Users
           </ion-item>
 
         <ion-item class="item-dark" menu-close ui-sref="app.categories" ng-show="can(appViews.categories)">
@@ -72,7 +81,7 @@
           </ion-item>
 
           <ion-item class="item-dark" menu-close ui-sref="app.settings" ng-show="can(appViews.settings)">
-            <i class="icon ion-gear-a"> Settings</i>
+            <i class="icon ion-ios-help-outline"> FAQ</i>
           </ion-item>
 
           <ion-item class="item-dark" menu-close href="#" ng-click="logOut()" ng-show="can(appActions.logout)">

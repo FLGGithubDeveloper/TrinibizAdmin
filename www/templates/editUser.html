@@ -1,0 +1,58 @@
+<ion-view view-title="{{title}}">
+
+
+  <ion-content>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
+      </ion-item>
+    </div>
+    <ion-scroll style="height:500px;">
+      <div style="height:1000px;">
+      <form class="list" name="editUserForm" novalidate ng-submit="editUser()" >
+        <div ng-repeat="user in user">
+
+          <ion-item class="item item-icon-left item-text-wrap" style="border: none">
+            <i class="icon ion-person royal"></i>
+          </ion-item>
+          <ion-item class="item  item-text-wrap" style="border: none">
+              First Name:
+              <label class="item item-input">
+                <input type="text" name="fname" placeholder="{{user.fname}}" ng-model="data.fname"/>
+              </label>
+          </ion-item>
+          <ion-item class="item  item-text-wrap" style="border: none">
+              Last Name:
+              <label class="item item-input">
+                <input type="text" name="lname" placeholder="{{user.lname}}" ng-model="data.lname"/>
+              </label>
+          </ion-item>
+          <ion-item class="item  item-text-wrap" style="border: none">
+              Username:
+              <label class="item item-input">
+                <input type="text" name="uname" placeholder="{{user.uname}}" ng-model="data.uname"/>
+              </label>
+          </ion-item>
+          <ion-item class="item  item-text-wrap" style="border: none">
+            Email:
+              <label class="item item-input">
+                <input type="text" name="email" placeholder="{{user.email}}" ng-model="data.email"/>
+              </label>
+          </ion-item>
+          <ion-item class="item  item-text-wrap" style="border: none">
+            Type:
+              <label class="item item-input">
+                <input type="text" name="email" placeholder="{{user.type}}" ng-model="data.type"/>
+              </label>
+          </ion-item>
+
+        <button ng-disabled="editUserForm.$invalid" class="button button-stable button-block">
+            Update
+        </button>
+      </div>
+      </form>
+      </div>
+    </ion-scroll>
+  </ion-content>
+</ion-view>

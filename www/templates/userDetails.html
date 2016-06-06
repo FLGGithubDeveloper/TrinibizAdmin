@@ -1,0 +1,56 @@
+<ion-view view-title="{{title}}" name="userDetails">
+
+
+  <ion-content>
+    <div class="card">
+      <ion-item class-="item item-thumbnail-left">
+        <img class="category-pic" ng-src="assets\img\icon.png" >
+        <span style="font-family: Arial Black; text-align: center;">TriniBiz Admin Center<span>
+      </ion-item>
+    </div>
+    <ion-scroll style="height:500px;">
+      <div style="height:3000px;">
+        <ion-item ng-repeat="user in user">
+          <div class="item item-icon-left item-text-wrap" style="border: none">
+            <i class="icon ion-person royal"></i>
+          </div>
+          <div class="item  item-text-wrap" style="border: none">
+              First Name: <span class="item-note">{{user.fname}}</span>
+          </div>
+          <div class="item  item-text-wrap" style="border: none">
+              Last Name: <span class="item-note">{{user.lname}}</span>
+          </div>
+          <div class="item  item-text-wrap" style="border: none">
+              Username: <span class="item-note">{{user.uname}}</span>
+          </div>
+          <div class="item  item-text-wrap" style="border: none">
+              Email: <span class="item-note">{{user.email}}</span>
+          </div>
+          <div class="item  item-text-wrap" style="border: none">
+              Email: <span class="item-note">{{user.type}}</span>
+          </div>
+        <div class="item tabs tabs-secondary tabs-icon-left" ng-hide="isAuthenticated()">
+          <a ui-sref="app.login" style="margin:0px 2px 0 2px;">Login</a> or <a ui-sref="app.signup" style="margin:0px 2px 0 2px;">Sign up</a> to conduct administrative tasks
+        </div>
+        <div class="row">
+          <div class="col"></div>
+          <div class="col col-25">
+            <div class="button-bar" ng-show="isAuthenticated()">
+              <button  class="button button-positive" ng-model="edit" ng-disabled="!can(appActions.editUser)" ui-sref="app.editUser({userId: user.id, userName: user.uname})">
+                  <i class="icon ion-edit"></i>
+              </button>
+              <button class="button button-assertive"  ng-click="showConfirm(user.id)" ng-disabled="!can(appActions.deleteUser)">
+                  <!--a class="tab-item" ng-click="showPopup(business)" ng-disabled="!can(appActions.review)"-->
+                <i class="icon ion-trash-b"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        </ion-item>
+      </div>
+    </ion-scroll>
+    <!--div ng-show="filterBarStatus == 'dirty' && !categories.length" class="no-results" ng-cloak>
+     <no-results></no-results>
+   </div-->
+  </ion-content>
+</ion-view>
