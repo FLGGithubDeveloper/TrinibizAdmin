@@ -92,7 +92,7 @@ angular.module('trinibiz', [
 
 .run(['$ionicPlatform','$rootScope','USER_ROLES', 'GUEST_USER','AclService','RolesPermissions','UserService' , (function($ionicPlatform,$rootScope,USER_ROLES, GUEST_USER,AclService,RolesPermissions,UserService) {
 
-Parse.initialize('QjbA9I9QfG8ezwEpWjGgyh4xxGJGMQzzo0HISCtZ','vELvekFTQGbDksDZWaoDudqPnZYc7ILyPFhNVmmA');
+Parse.initialize('g2hlZEbodf0gpDsSOL6h4QGdDeNi5aP2078lVDpT','BoFACsTK3qOISA4UiU9u69gqYPotdMUugBjdNG4k');
 
 AclService.setAbilities(RolesPermissions);
 
